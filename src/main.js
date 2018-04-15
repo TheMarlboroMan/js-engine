@@ -14,22 +14,25 @@ import {input_keymap_creator} from './core/input_tools.js';
 
 import {display_control} from './app/display_control.js';
 import {intro_controller} from './app/intro_controller.js';
+import {main_controller} from './app/main_controller.js';
 
 let k=new kernel();
-
-//Load controllers...
-//TODO: This would be much better with unique tokens.
-k.inject_controller('intro', new intro_controller());
-
-//Specify initial controller.
-k.set_active_controller('intro');
 
 //Setup specific systems: display and input.
 let ifc=new input_keymap_creator();
 //TODO: Again, better with unique tokens.
+ifc.add('space', 32);
 ifc.add('up', 38);
 ifc.add('down', 40);
 k.setup(new display_control(), ifc.get_keymap());
+
+//Load controllers...
+//TODO: This would be much better with unique tokens.
+k.inject_controller('intro', new intro_controller());
+k.inject_controller('main', new main_controller());
+
+//Specify initial controller.
+k.set_active_controller('intro');
 
 document.getElementById('btn_stop').addEventListener('click', () => {k.stop();});
 document.getElementById('btn_start').addEventListener('click', () => {k.start();});

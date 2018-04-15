@@ -17,6 +17,7 @@ function create_keymap(_map) {
 }
 
 export class input {
+
 	constructor(_filter_map) {
 
 		if('object' !== typeof _filter_map) {
@@ -30,18 +31,26 @@ export class input {
 
 		//This looks like {up: false, down: false...}
 		this.keydowns=create_keymap(_filter_map);
+
+		this.quick_access={'down' : false};
+
 		document.addEventListener('keydown', (_event) => {this.handle_keydown(_event);});
 	}
 
 	handle_keydown(_event) {
 		if(undefined!==this.reverse_map[_event.keyCode]) {
 			this.keydowns[this.reverse_map[_event.keyCode]]=true;
+			this.quick_access['down']=true;
 		}
 	}
 
 	clear() {
 		for(let k in this.keydowns) {
 			this.keydowns[k]=false;
+		}
+
+		for(let k in this.quick_access) {
+			this.quick_access[k]=false;
 		}
 	}
 
@@ -50,5 +59,9 @@ export class input {
 			throw new Error("unknown key for is_keydown");
 		}
 		return this.keydowns[_key];
+	}
+
+	is_any_keydown() {
+		return this.quick_access['down'];
 	}
 }

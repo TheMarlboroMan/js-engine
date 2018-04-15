@@ -4,23 +4,16 @@ import {controller} from '../core/controller.js';
 import {display_2d_manipulator} from '../core/display_2d_manipulator.js';
 import {rgb_color} from '../core/display_tools.js';
 
-export class intro_controller extends controller {
+export class main_controller extends controller {
 
 	constructor() {
 		super();
-		this.clear_color=new rgb_color(0, 0, 0);
+		this.clear_color=new rgb_color(0, 0, 255);
 	}
 
 	do_step(_delta, _input) {
-
-		if(_input.is_keydown('up')) {
-			this.clear_color=new rgb_color(0, 0, 0);
-		}
-		else if(_input.is_keydown('down')) {
-			this.clear_color=new rgb_color(255, 0, 0);
-		}
-		else if(_input.is_keydown('space')) {
-			this.state_controller.request_state_change("main");
+		if(_input.is_keydown('space')) {
+			this.state_controller.request_state_change("intro");
 		}
 	}
 

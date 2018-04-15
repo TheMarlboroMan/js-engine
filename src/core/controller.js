@@ -1,4 +1,8 @@
 "use strict"
+
+import {state_controller} from './state_controller.js';
+import {messenger, message} from './messenger.js';
+
 //!This is the base controller.
 export class controller {
 
@@ -8,11 +12,12 @@ export class controller {
 	}
 
 	setup_state_and_messenger(_state_controller, _messenger) {
-		if(instanceof _state_controller !== 'state_controller') {
+
+		if(! _state_controller instanceof state_controller) {
 			throw new Error("Invalid state controller");
 		}
 
-		if(instanceof _messenger !== 'messenger') {
+		if(!_messenger instanceof messenger) {
 			throw new Error("Invalid messenger");
 		}
 
@@ -20,27 +25,11 @@ export class controller {
 		this.messenger=_messenger;
 	}
 
-	//TODO: Move all shit into place!
+	receive_message(_message) {
+		if(! _message instanceof message) {
+			throw new Error("Invalid message received");
+		}
 
-	send_message(_message) {
-
-	}
-
-	//let next_state=null;
-
-	request_state_change(_ns) {
-		next_state=_ns;
-	}
-
-	is_request_state_change() {
-		return null!==next_state;
-	}
-
-	clear_state_change() {
-		next_state=null;
-	}
-
-	get_requested_state() {
-		return next_state;
+		//TODO: The interpreter...Oh damn. How do I call a function in the derived class???
 	}
 }

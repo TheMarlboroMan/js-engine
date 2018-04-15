@@ -1,6 +1,8 @@
 "use strict";
 
 import {input} from './input.js';
+import {state_controller} from './state_controller.js';
+import {messenger} from './messenger.js';
 
 export class kernel {
 
@@ -19,15 +21,20 @@ export class kernel {
 	setup(_dc, _km) {
 		this.display_control=_dc;
 		this.input=new input(_km);
+		this.state_controller=new state_controller();
+		this.messenger=new messenger();
 	}
 
 	inject_controller(_key, _controller) {
+
+		if(null===this.state_controller) {
+			throw new Error("kernel must be setup before controllers can be injected");
+		}
 
 		if(undefined!==this.controllers[_key]) {
 			throw new Error("controller "+_key+" was already injected");
 		}
 
-		//TODO: We still need this!!!.
 		_controller.setup_state_and_messenger(this.state_controller, this.messenger);
 		this.controllers[_key]=_controller;
 	}
@@ -41,7 +48,10 @@ export class kernel {
 	}
 
 	is_init() {
-		return null!==this.display_control;
+		return null!==this.display_control 
+			&& null!==this.input
+			&& null!==this.messenger
+			&& null!==this.state_controller;
 	}
 
 	stop() {
@@ -82,13 +92,16 @@ export class kernel {
 		this.active_controller.do_step(this.delta, this.input);
 		this.input.clear();
 
-		if(this.active_controller.is_request_state_change()) {
-			
-			//TODO: Check if state exists
-			//TODO: Change
-		
-			//TODO: We should actually have something that does this.
-			this.active_controller.clear_state_change();
+		if(this.state_controller.is_request_state_change()) {
+
+			let requested_state=this.state_controller.get_requested_state();
+
+			if(undefined===this.controllers[requested_state]) {
+				throw new Error("State requested '"+requested_state+"' does not exist");
+			}
+
+			this.active_controller=this.controllers[requested_state];
+			this.state_controller.clear_state_change();
 		}
 	}
 
