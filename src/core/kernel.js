@@ -11,6 +11,7 @@ export class kernel {
 		this.input=null;
 		this.controllers={};
 		this.active_controller=null;
+		this.running=false;
 	}
 
 	//!Display control is not actually defined as anything: is just anything 
@@ -26,6 +27,8 @@ export class kernel {
 			throw new Error("controller "+_key+" was already injected");
 		}
 
+		//TODO: We still need this!!!.
+		_controller.setup_state_and_messenger(this.state_controller, this.messenger);
 		this.controllers[_key]=_controller;
 	}
 
@@ -41,7 +44,20 @@ export class kernel {
 		return null!==this.display_control;
 	}
 
+	stop() {
+		if(!this.started) {
+			throw new Error("kernel was not started");
+		}
+
+		clearInterval(this.loop_interval);
+		requestAnimationFrame(null);
+	}
+
 	start() {
+		if(this.started) {
+			throw new Error("kernel was already started");
+		}
+
 		if(!this.is_init()) {
 			throw new Error("kernel was not correctly setup");
 		}
@@ -50,7 +66,7 @@ export class kernel {
 			throw new Error("active controller is not set");
 		}
 
-		this.last_step=Date.now();;
+		this.last_step=Date.now();
 		this.loop_interval=setInterval(()=>{this.loop()}, 16.666);
 		requestAnimationFrame( () => {this.draw();});
 	}
@@ -60,11 +76,20 @@ export class kernel {
 		this.delta=(now-this.last_step) / 1000.0;
 		this.last_step=now;
 
-		//TODO: Maybe this should be set too...
+		//TODO: Maybe this should be setup too...
 		if(this.delta > 50.0) this.delta=50.0;
 
 		this.active_controller.do_step(this.delta, this.input);
 		this.input.clear();
+
+		if(this.active_controller.is_request_state_change()) {
+			
+			//TODO: Check if state exists
+			//TODO: Change
+		
+			//TODO: We should actually have something that does this.
+			this.active_controller.clear_state_change();
+		}
 	}
 
 	draw() {

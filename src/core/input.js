@@ -19,23 +19,23 @@ function create_keymap(_map) {
 export class input {
 	constructor(_filter_map) {
 
-		//TODO: We could actually use a class we provide and encapsulate... like set('up', 32), etc...
-		//TODO: That's actually much better than this approach.
 		if('object' !== typeof _filter_map) {
 			throw new Error("A valid filter map is necessary to build the input");
 		}
 
 		this.listeners=new Array();
-		this.filter_map=_filter_map;
-		this.reverse_map=create_reverse_lookup(this.filter_map);
-		this.keydowns=create_keymap(this.filter_map);
 
-		document.addEventListener('keydown', (event) => {this.handle_keydown(event);});
+		//This looks like keycode : 'keyname';
+		this.reverse_map=create_reverse_lookup(_filter_map);
+
+		//This looks like {up: false, down: false...}
+		this.keydowns=create_keymap(_filter_map);
+		document.addEventListener('keydown', (_event) => {this.handle_keydown(_event);});
 	}
 
 	handle_keydown(_event) {
 		if(undefined!==this.reverse_map[_event.keyCode]) {
-			this.keydowns[_event.keyCode]=true;
+			this.keydowns[this.reverse_map[_event.keyCode]]=true;
 		}
 	}
 
@@ -46,9 +46,9 @@ export class input {
 	}
 
 	is_keydown(_key) {
-		if(undefined===this.filter_map[_key]) {
+		if(undefined===this.keydowns[_key]) {
 			throw new Error("unknown key for is_keydown");
 		}
-		return this.keydowns[this.reverse_map[_key]];
+		return this.keydowns[_key];
 	}
 }

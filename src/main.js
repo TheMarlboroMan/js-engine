@@ -31,4 +31,7 @@ ifc.add('up', 38);
 ifc.add('down', 40);
 k.setup(new display_control(), ifc.get_keymap());
 
-k.start();
+document.getElementById('btn_stop').addEventListener('click', () => {k.stop();});
+document.getElementById('btn_start').addEventListener('click', () => {k.start();});
+
+//k.start();
