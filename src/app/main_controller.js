@@ -17,7 +17,6 @@ export class main_controller extends controller {
 			this.state_controller.request_state_change("intro");
 		}
 		else if(_input.is_keydown('enter')) {
-console.log("sending...");
 			this.messenger.send(new message(2, "BROADCAST", []));
 		}
 	}
@@ -27,6 +26,6 @@ console.log("sending...");
 	}
 
 	do_receive_message(_message) {
-		console.log("main controller got ", message);
+		console.log("main controller got ", _message);
 	}
 }

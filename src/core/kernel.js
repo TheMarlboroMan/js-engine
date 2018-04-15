@@ -123,14 +123,11 @@ export class kernel {
 		//Consume the queue.
 		this.message_queue.get_queue().forEach( (_message) => {
 			if(!_message.recipients.length) {
-console.log("pure broadcast!");
 				for(let c in this.controllers) {
-console.log(c);
-					c.do_receive_message(_message);
+					this.controllers[c].do_receive_message(_message);
 				}
 			}
 			else {
-console.log("specific message!");
 				_message.recipients.forEach( (_key) => {
 					if(undefined===this.controllers[_key]) {
 						throw new Error("Invalid message recipient "+_key);
