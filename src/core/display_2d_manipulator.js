@@ -21,6 +21,14 @@ export class display_2d_manipulator {
 		_display.context.clearRect(0, 0, _display.canvas.width, _display.canvas.height);
 	}
 
+	//TODO: Draw poly.
+
+	//TODO: Draw box.
+
+	//TODO: Draw circle.
+
+	//TODO: Draw sprite.
+
 
 
 }

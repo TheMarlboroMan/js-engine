@@ -13,7 +13,7 @@ export class rgb_color {
 }
 
 export class rgba_color extends rgb_color{
-	constructor(_r, _g, _b, _a {
+	constructor(_r, _g, _b, _a) {
 		super(_r, _g, _b);
 		this.a=_a;
 	}
