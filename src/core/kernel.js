@@ -2,7 +2,7 @@
 
 import {input} from './input.js';
 import {state_controller} from './state_controller.js';
-import {messenger} from './messenger.js';
+import {messenger, message_queue} from './messages.js';
 
 export class kernel {
 
@@ -11,6 +11,8 @@ export class kernel {
 		this.loop_interval=null;
 		this.display_control=null;
 		this.input=null;
+		this.state_controller=null;
+		this.message_queue=null;
 		this.controllers={};
 		this.active_controller=null;
 		this.running=false;
@@ -22,7 +24,7 @@ export class kernel {
 		this.display_control=_dc;
 		this.input=new input(_km);
 		this.state_controller=new state_controller();
-		this.messenger=new messenger();
+		this.message_queue=new message_queue();
 	}
 
 	inject_controller(_key, _controller) {
@@ -35,7 +37,7 @@ export class kernel {
 			throw new Error("controller "+_key+" was already injected");
 		}
 
-		_controller.setup_state_and_messenger(this.state_controller, this.messenger);
+		_controller.setup_state_and_messenger(this.state_controller, new messenger(this.message_queue));
 		this.controllers[_key]=_controller;
 	}
 
@@ -48,9 +50,9 @@ export class kernel {
 	}
 
 	is_init() {
-		return null!==this.display_control 
+		return null!==this.display_control
 			&& null!==this.input
-			&& null!==this.messenger
+			&& null!==this.message_queue
 			&& null!==this.state_controller;
 	}
 
@@ -59,8 +61,9 @@ export class kernel {
 			throw new Error("kernel was not started");
 		}
 
+		this.input.deactivate();
 		clearInterval(this.loop_interval);
-		requestAnimationFrame(null);
+		cancelAnimationFrame(null);
 	}
 
 	start() {
@@ -76,6 +79,8 @@ export class kernel {
 			throw new Error("active controller is not set");
 		}
 
+		this.started=true;
+		this.input.activate();
 		this.last_step=Date.now();
 		this.loop_interval=setInterval(()=>{this.loop()}, 16.666);
 		requestAnimationFrame( () => {this.draw();});
@@ -91,6 +96,10 @@ export class kernel {
 
 		this.active_controller.do_step(this.delta, this.input);
 		this.input.clear();
+
+		if(this.message_queue.get_length()) {
+			this.dispatch_messages();
+		}
 
 		if(this.state_controller.is_request_state_change()) {
 
@@ -108,5 +117,30 @@ export class kernel {
 	draw() {
 		this.active_controller.do_draw(this.display_control);
 		requestAnimationFrame( () => {this.draw();}); 
+	}
+
+	dispatch_messages() {
+		//Consume the queue.
+		this.message_queue.get_queue().forEach( (_message) => {
+			if(!_message.recipients.length) {
+console.log("pure broadcast!");
+				for(let c in this.controllers) {
+console.log(c);
+					c.do_receive_message(_message);
+				}
+			}
+			else {
+console.log("specific message!");
+				_message.recipients.forEach( (_key) => {
+					if(undefined===this.controllers[_key]) {
+						throw new Error("Invalid message recipient "+_key);
+					}
+					this.controllers[_key].do_receive_message(_message);
+				});
+			}
+		});
+
+		//Clear it.
+		this.message_queue.clear();
 	}
 }

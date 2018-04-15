@@ -24,6 +24,7 @@ let ifc=new input_keymap_creator();
 ifc.add('space', 32);
 ifc.add('up', 38);
 ifc.add('down', 40);
+ifc.add('enter', 13);
 k.setup(new display_control(), ifc.get_keymap());
 
 //Load controllers...

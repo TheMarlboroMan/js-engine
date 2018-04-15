@@ -1,7 +1,7 @@
 "use strict"
 
 import {state_controller} from './state_controller.js';
-import {messenger, message} from './messenger.js';
+import {messenger, message} from './messages.js';
 
 //!This is the base controller.
 export class controller {
@@ -25,11 +25,15 @@ export class controller {
 		this.messenger=_messenger;
 	}
 
-	receive_message(_message) {
-		if(! _message instanceof message) {
-			throw new Error("Invalid message received");
-		}
+	do_step(_delta, _input) {
+		//Implemented by the derived class.
+	}
 
-		//TODO: The interpreter...Oh damn. How do I call a function in the derived class???
+	do_draw(_display_control) {
+		//To be implemented by the derived class.
+	}
+
+	do_receive_message(_message) {
+		//To be implemented by the derived class.
 	}
 }

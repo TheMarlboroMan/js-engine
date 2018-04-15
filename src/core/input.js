@@ -24,7 +24,7 @@ export class input {
 			throw new Error("A valid filter map is necessary to build the input");
 		}
 
-		this.listeners=new Array();
+		this.keydown_listener=(_event) => {this.handle_keydown(_event);};
 
 		//This looks like keycode : 'keyname';
 		this.reverse_map=create_reverse_lookup(_filter_map);
@@ -33,8 +33,14 @@ export class input {
 		this.keydowns=create_keymap(_filter_map);
 
 		this.quick_access={'down' : false};
+	}
 
-		document.addEventListener('keydown', (_event) => {this.handle_keydown(_event);});
+	activate() {
+		document.addEventListener('keydown', this.keydown_listener, false);
+	}
+
+	deactivate() {
+		document.removeEventListener('keydown', this.keydown_listener, false);
 	}
 
 	handle_keydown(_event) {

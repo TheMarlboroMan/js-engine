@@ -7,6 +7,10 @@ If you need to build, you'd better have an updated NodeJS version (and not the 0
 
 I personally tried it with V6.
 
+# Crash course.
+
+Start by src/main.js. Move then to src/app directory for a few examples.
+
 # Building.
 
 - If your browser support ES6 style imports and exports:
