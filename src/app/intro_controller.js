@@ -58,6 +58,8 @@ export class intro_controller extends controller {
 			return r(t.x, t.y);
 		};
 
+		//TODO: Now do this for real...
+
 		//Draw the place..
 		display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(0, 64), gs('solid', 0));
 		display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(0, 96), gs('solid', 0));

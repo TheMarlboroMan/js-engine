@@ -4,6 +4,7 @@ import {input} from './input.js';
 import {state_controller} from './state_controller.js';
 import {messenger, message_queue} from './messages.js';
 import {resource_manager} from './resource_manager.js';
+import {input_keymap_creator} from './input_tools.js';
 
 export class kernel {
 
@@ -18,7 +19,6 @@ export class kernel {
 
 		this.running=false;
 
-
 		this.state_controller=new state_controller();
 		this.message_queue=new message_queue();
 		this.resource_manager=new resource_manager();
@@ -28,7 +28,13 @@ export class kernel {
 	//!the application defines to draw :).
 	setup(_dc, _km) {
 		this.display_control=_dc;
-		this.input=new input(_km);
+
+		let ifc=new input_keymap_creator();
+		for(let i in _km) {
+			ifc.add(i, _km[i]);
+		}
+
+		this.input=new input(ifc.get_keymap());
 	}
 
 	inject_controller(_key, _controller) {
