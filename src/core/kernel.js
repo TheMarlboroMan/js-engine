@@ -60,7 +60,6 @@ export class kernel {
 		}
 
 		return Promise.all(promises)
-		.then((_res) => {console.log(_res);})
 		.then(() => {
 			if(this.app_resource_load_class) {
 				return this.app_resource_load_class.load();

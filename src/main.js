@@ -20,10 +20,15 @@ let k=new kernel();
 
 //Setup specific systems: display and input.
 let ifc=new input_keymap_creator();
+
+//TODO: This goes better into an app file and then ifc.add(array);
+
 //TODO: Again, better with unique tokens.
 ifc.add('space', 32);
 ifc.add('up', 38);
 ifc.add('down', 40);
+ifc.add('left', 37);
+ifc.add('right', 39);
 ifc.add('enter', 13);
 
 //Load controllers...
@@ -35,8 +40,8 @@ k.set_active_controller('intro');
 k.setup(new display_control(), ifc.get_keymap());
 
 //Load resources and be done...
-let resources={'sprites' : 'https://opengameart.org/sites/default/files/MiniKnightSet.png',
-	'tiles' : 'https://opengameart.org/sites/default/files/tileset_32_0.png'};
+let resources={'sprites' : 'assets/MiniKnightSet.png',
+	'tiles' : 'assets/tileset_32_0.png'};
 
 k.init_loading_phase(resources)
 .then(() => {

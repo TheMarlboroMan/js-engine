@@ -1,6 +1,7 @@
 "use strict"
 
 import {rgb_color} from './display_tools.js';
+import {camera_2d} from './camera_2d.js';
 
 export class display_2d_manipulator {
 
@@ -27,9 +28,12 @@ export class display_2d_manipulator {
 
 	//TODO: Draw circle.
 
-	//TODO: Draw sprite.
+	//!_display is a display_2d object.
 	//!_source must be a Image. _rect_pos and clip must be of type rect.
-	static draw_sprite(_display, _source, _rect_pos, _rect_clip) {
+	//!_source can be obtained from the resource_manager class.
+
+	//TODO Not really sure about this kind of interface...
+	static draw_sprite(_display, _camera, _source, _rect_pos, _rect_clip) {
 
 		let sx=0, sy=0, sw=_source.width, sh=_source.height;
 		if(undefined!==_rect_clip) {
@@ -39,10 +43,19 @@ export class display_2d_manipulator {
 			sh=_rect_clip.h;
 		}
 
-		let 	dx=_rect_pos.x, 
-			dy=_rect_pos.y, 
-			dw=_rect_pos.w, 
+		let 	dx=_rect_pos.x,
+			dy=_rect_pos.y,
+			dw=_rect_pos.w,
 			dh=_rect_pos.h;
+
+		if(null!==_camera) {
+			if(!_camera instanceof camera_2d) {
+				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");
+			}
+
+			dx+=parseInt(_camera.x, 10);
+			dy+=parseInt(_camera.y, 10);
+		}
 
 		_display.context.drawImage(_source, sx, sy, sw, sh, dx, dy, dw, dh);
 	}

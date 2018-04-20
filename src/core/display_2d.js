@@ -10,5 +10,4 @@ export class display_2d {
 
 		this.context=this.canvas.getContext("2d");
 	}
-
 }
