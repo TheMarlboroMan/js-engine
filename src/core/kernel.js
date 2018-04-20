@@ -3,6 +3,7 @@
 import {input} from './input.js';
 import {state_controller} from './state_controller.js';
 import {messenger, message_queue} from './messages.js';
+import {resource_manager} from './resource_manager.js';
 
 export class kernel {
 
@@ -11,11 +12,16 @@ export class kernel {
 		this.loop_interval=null;
 		this.display_control=null;
 		this.input=null;
-		this.state_controller=null;
-		this.message_queue=null;
 		this.controllers={};
 		this.active_controller=null;
+		this.app_resource_load_class=null;
+
 		this.running=false;
+
+
+		this.state_controller=new state_controller();
+		this.message_queue=new message_queue();
+		this.resource_manager=new resource_manager();
 	}
 
 	//!Display control is not actually defined as anything: is just anything 
@@ -23,15 +29,9 @@ export class kernel {
 	setup(_dc, _km) {
 		this.display_control=_dc;
 		this.input=new input(_km);
-		this.state_controller=new state_controller();
-		this.message_queue=new message_queue();
 	}
 
 	inject_controller(_key, _controller) {
-
-		if(null===this.state_controller) {
-			throw new Error("kernel must be setup before controllers can be injected");
-		}
 
 		if(undefined!==this.controllers[_key]) {
 			throw new Error("controller "+_key+" was already injected");
@@ -39,6 +39,37 @@ export class kernel {
 
 		_controller.setup_state_and_messenger(this.state_controller, new messenger(this.message_queue));
 		this.controllers[_key]=_controller;
+	}
+
+	set_app_resource_load_class(_obj) {
+		//TODO: Check it is an object.
+		//TODO: Check is has the "load" method.
+		//TODO: Assign.
+	}
+
+	init_loading_phase(_resources) {
+
+		let promises=Array();
+		for(let i in _resources) {
+			//Oh well...
+			let p=new Promise((_ok, _err) => {
+				return this.resource_manager.load_image(_resources[i], i)
+					.then((_res) => {_ok(_res);});
+			});
+			promises.push(p);
+		}
+
+		return Promise.all(promises)
+		.then((_res) => {console.log(_res);})
+		.then(() => {
+			if(this.app_resource_load_class) {
+				return this.app_resource_load_class.load();
+			}
+			else {
+				return true;
+			}
+		})
+		.catch((_err) => {console.error('Something failed in the loading phase', _err);});
 	}
 
 	set_active_controller(_key) {
@@ -115,7 +146,7 @@ export class kernel {
 	}
 
 	draw() {
-		this.active_controller.do_draw(this.display_control);
+		this.active_controller.do_draw(this.display_control, this.resource_manager);
 		requestAnimationFrame( () => {this.draw();}); 
 	}
 

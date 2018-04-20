@@ -25,17 +25,22 @@ ifc.add('space', 32);
 ifc.add('up', 38);
 ifc.add('down', 40);
 ifc.add('enter', 13);
-k.setup(new display_control(), ifc.get_keymap());
 
 //Load controllers...
 //TODO: This would be much better with unique tokens.
 k.inject_controller('intro', new intro_controller());
 k.inject_controller('main', new main_controller());
-
-//Specify initial controller.
 k.set_active_controller('intro');
 
-document.getElementById('btn_stop').addEventListener('click', () => {k.stop();});
-document.getElementById('btn_start').addEventListener('click', () => {k.start();});
+k.setup(new display_control(), ifc.get_keymap());
 
-//k.start();
+//Load resources and be done...
+let resources={'sprites' : 'https://opengameart.org/sites/default/files/MiniKnightSet.png',
+	'tiles' : 'https://opengameart.org/sites/default/files/tileset_32_0.png'};
+
+k.init_loading_phase(resources)
+.then(() => {
+	console.log("loading phase done");
+	document.getElementById('btn_stop').addEventListener('click', () => {k.stop();});
+	document.getElementById('btn_start').addEventListener('click', () => {k.start();});
+});
