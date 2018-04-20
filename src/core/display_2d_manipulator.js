@@ -2,6 +2,7 @@
 
 import {rgb_color} from './display_tools.js';
 import {camera_2d} from './camera_2d.js';
+import {rect} from './rect.js';
 
 export class display_2d_manipulator {
 
@@ -24,7 +25,27 @@ export class display_2d_manipulator {
 
 	//TODO: Draw poly.
 
-	//TODO: Draw box.
+	static draw_rect(_display, _camera, _rect, _color) {
+		//TODO: Test with rgba...
+		if(!_color instanceof rgb_color || !_rect instanceof rect) {
+			throw new Error("canvas_manipulator::draw_rect should be called with a color and a rect");
+		}
+
+		let x=_rect.x, y=_rect.y, w=_rect.w, h=_rect.h;
+
+		//TODO: Don't repeat yourself...
+		if(null!==_camera) {
+			if(!_camera instanceof camera_2d) {
+				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");
+			}
+
+			x+=parseInt(_camera.x, 10);
+			y+=parseInt(_camera.y, 10);
+		}
+
+		_display.context.fillStyle=_color.as_style();
+		_display.context.fillRect(x, y, w, h);
+	}
 
 	//TODO: Draw circle.
 
@@ -48,6 +69,7 @@ export class display_2d_manipulator {
 			dw=_rect_pos.w,
 			dh=_rect_pos.h;
 
+		//TODO: Don't repeat yourself...
 		if(null!==_camera) {
 			if(!_camera instanceof camera_2d) {
 				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");

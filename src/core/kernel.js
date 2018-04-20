@@ -130,8 +130,8 @@ export class kernel {
 		//TODO: Maybe this should be setup too...
 		if(this.delta > 50.0) this.delta=50.0;
 
+//		this.input.clear(); //It doesn't work like this...
 		this.active_controller.do_step(this.delta, this.input);
-		this.input.clear();
 
 		if(this.message_queue.get_length()) {
 			this.dispatch_messages();

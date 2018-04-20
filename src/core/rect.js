@@ -9,7 +9,7 @@ export class rect {
 	}
 
 	collides_with(_other) {
-		return rects_collide(this, _other);
+		return rect.rects_collide(this, _other);
 	}
 
 	static rects_collide(_a, _b) {
@@ -24,5 +24,9 @@ export class rect {
 		let in_y=no_unit_collision(_a.y, _b.y, _a.y+_a.h, _b.y+_b.h);
 		return in_y;
 //		return in_x && in_y;
+	}
+
+	copy() {
+		return new rect(this.x, this.y, this.w, this.h);
 	}
 }
