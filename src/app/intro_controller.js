@@ -49,20 +49,25 @@ export class intro_controller extends controller {
 		//TODO: What if the player is out of bounds???
 		this.player.save_last_known();
 		this.player.loop_x(_delta);
-		this.room.tiles.forEach((_item) => {
+		
+//		this.room.tiles.forEach((_item) => { //Cannot break from forEach.
+		for(let i=0; i < this.room.tiles.length; i++) {
+			let _item=this.room.tiles[i];
 			if(this.player.position.collides_with(_item.position)) {
 				this.player.process_collision_x(_item);
-				//TODO: Cannot break from forEach. 
+				break;
 			}
-		});
+		}
 
+		this.player.save_last_known();
 		this.player.loop_y(_delta);
-		this.room.tiles.forEach((_item) => {
+		for(let i=0; i< this.room.tiles.length; i++) {
+			let _item=this.room.tiles[i];
 			if(this.player.position.collides_with(_item.position)) {
 				this.player.process_collision_y(_item);
-				//TODO: Cannot break from forEach.
+				break;
 			}
-		});
+		};
 	}
 
 	do_draw(_display_control, _rm) {

@@ -123,30 +123,37 @@ export class kernel {
 	}
 
 	loop(_delta) {
-		var now=Date.now();
-		this.delta=(now-this.last_step) / 1000.0;
-		this.last_step=now;
+		try {
+			var now=Date.now();
+			this.delta=(now-this.last_step) / 1000.0;
+			this.last_step=now;
 
-		//TODO: Maybe this should be setup too...
-		if(this.delta > 50.0) this.delta=50.0;
+			//TODO: Maybe this should be setup too...
+			if(this.delta > 50.0) this.delta=50.0;
 
-//		this.input.clear(); //It doesn't work like this...
-		this.active_controller.do_step(this.delta, this.input);
+	//		this.input.clear(); //It doesn't work like this...
+			this.active_controller.do_step(this.delta, this.input);
 
-		if(this.message_queue.get_length()) {
-			this.dispatch_messages();
-		}
-
-		if(this.state_controller.is_request_state_change()) {
-
-			let requested_state=this.state_controller.get_requested_state();
-
-			if(undefined===this.controllers[requested_state]) {
-				throw new Error("State requested '"+requested_state+"' does not exist");
+			if(this.message_queue.get_length()) {
+				this.dispatch_messages();
 			}
 
-			this.active_controller=this.controllers[requested_state];
-			this.state_controller.clear_state_change();
+			if(this.state_controller.is_request_state_change()) {
+
+				let requested_state=this.state_controller.get_requested_state();
+
+				if(undefined===this.controllers[requested_state]) {
+					throw new Error("State requested '"+requested_state+"' does not exist");
+				}
+
+				this.active_controller=this.controllers[requested_state];
+				this.state_controller.clear_state_change();
+			}
+		}
+		catch(_error) {
+			console.error(_error);
+			console.log("Stopping...");
+			this.stop();
 		}
 	}
 
