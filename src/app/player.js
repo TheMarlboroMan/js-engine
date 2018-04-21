@@ -44,7 +44,7 @@ export class player {
 
 		//TODO: Won't jump... I am taking off but before I can move I guess
 		//i am adjusted again...
-
+//TODO... if you want to fix this, unit test the rect class. It might be detecting collisions where there are none.
 		if(_input.y < 0 && this.vector.y==0.0) {
 			this.vector.y=-player_jump_factor;
 		}
