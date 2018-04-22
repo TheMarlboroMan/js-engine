@@ -27,22 +27,17 @@ export class player {
 //document.getElementById('debug').innerHTML=_input.x+" "+_input.y;
 		//Disable air control.
 		if(!this.vector.y) {
-			if(_input.x < 0) {
-				this.vector.x=-player_walking_speed;
-			}
-			else if(_input.x > 0) {
-				this.vector.x=player_walking_speed;
-			}
-			else {
-				this.vector.x=0.0;
-			}
+			//JS will promote _input.x to float, it seems...
+			this.vector.x=_input.x * player_walking_speed;
 		}
 
-		//TODO: This still won't allow for correct double jumping, I think.
+		//Double jump... 
+		//TODO: Can jump twice while falling. Don't like it.
 		if(_input.y < 0 && /*this.vector.y==0.0* &&*/ this.remaining_jumps) {
 			--this.remaining_jumps;
 			this.vector.y=player_jump_factor;
-			console.log(this.remaining_jumps);
+			//Allow a change of direction.
+			this.vector.x=_input.x * player_walking_speed;
 		}
 	}
 
