@@ -20,6 +20,7 @@ export class player {
 		this.position=new rect(0, 0, 8, 16);
 		this.last_position=this.position.copy();
 		this.vector=new vector_2d();
+		this.remaining_jumps=2;
 	}
 
 	get_input(_input) {
@@ -37,16 +38,13 @@ export class player {
 			}
 		}
 
-		//TODO: Check that we are not on the air.
-		//This could be done AT THE END of every step, calling a "get_status"
-		//on the player. We should assume that the very first status
-		//is air, just in case.
+		//TODO: Now we've got serious trouble with the keydown...
 
-		//TODO: Won't jump... I am taking off but before I can move I guess
-		//i am adjusted again...
-//TODO... if you want to fix this, unit test the rect class. It might be detecting collisions where there are none.
-		if(_input.y < 0 && this.vector.y==0.0) {
-			this.vector.y=-player_jump_factor;
+		//TODO: This still won't allow for correct double jumping, I think.
+		if(_input.y < 0 && /*this.vector.y==0.0* &&*/ this.remaining_jumps) {
+			--this.remaining_jumps;
+			this.vector.y=player_jump_factor;
+			console.log(this.remaining_jumps);
 		}
 	}
 
@@ -59,11 +57,18 @@ export class player {
 
 	//TODO: We should actually use composition for this.
 	loop_y(_delta) {
-		this.vector.y+=128.0*_delta;
-		//TODO: Not really integrated.
+
+		this.do_gravity(_delta, 3.0, 80.0, 200.0);
+
 		if(this.vector.y) {
 			this.position.y+=this.vector.y*_delta;
 		}
+	}
+
+	do_gravity(_delta, _gravity_value, _weight, _max_fall_speed)
+	{
+		this.vector.integrate_y(_delta, _weight *_gravity_value);
+		if(this.vector.y > _max_fall_speed) this.vector.y=_max_fall_speed;
 	}
 
 	//TODO: We should actually use composition for this... with callbacks.
@@ -95,6 +100,8 @@ export class player {
 		}
 		//Touching the ground.
 		else if(this.last_position.is_over(_tile.position)) {
+			//TODO. Reset function for the jumps. Or better, a callback.
+			this.remaining_jumps=2;
 			this.position.adjust_to(_tile.position, pos_top);
 		}
 		else {

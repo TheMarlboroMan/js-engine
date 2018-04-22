@@ -32,6 +32,8 @@ class testrect extends rect {
 	}
 }
 
+//TODO: I guess I could actually have an interface for this.
+//TODO: Add parent class with the results and name and stuff.
 class testblock {
 
 	constructor(_name, _fn, _table) {

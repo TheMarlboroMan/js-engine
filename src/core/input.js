@@ -59,14 +59,31 @@ export class input {
 
 	handle_event(_event, _map, _quick) {
 
+		//TODO: Okay, when the event is down we should prevent repeats...
+		//TODO... Oh well, this is NOT working.
+		//TODO: I can clearly see the problem: the events are not in
+		//sync with the application and can interrupt the flow at any
+		//time... Perhaps we could do a combo of BLOCK-CLEAR-UNLOCK
+		//when we don't allow new events before the controller loop
+		//and we clear the keydowns after it. We could just try.
+
 		if(undefined!==this.reverse_map[_event.keyCode]) {
 
 			let key=this.reverse_map[_event.keyCode];
 
+			//TODO: Check if there's more to do below...
+			if(_quick==='down') {
+				console.log("DOWN "+_event.repeat);
+				if(_event.repeat) {
+					_map[key]=false;
+					return;
+				}
+			}
+
 			_map[key]=true;
 			this.quick_access[_quick]=true;
 
-			if(_quick=='up') {
+			if(_quick==='up') {
 				this.keydowns[key]=false;
 				this.keypresses[key]=false;
 				this.quick_access['down']=false;
