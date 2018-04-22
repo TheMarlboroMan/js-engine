@@ -1,5 +1,9 @@
 "use strict";
 
+import {test_suite} from './core/test/rect.js';
+let m=new test_suite();
+
+
 /*This is the main customization point where the kernel is loaded
 with everything that is application specific.
 
