@@ -38,8 +38,6 @@ export class player {
 			}
 		}
 
-		//TODO: Now we've got serious trouble with the keydown...
-
 		//TODO: This still won't allow for correct double jumping, I think.
 		if(_input.y < 0 && /*this.vector.y==0.0* &&*/ this.remaining_jumps) {
 			--this.remaining_jumps;

@@ -27,7 +27,7 @@ export class intro_controller extends controller {
 		let pi=new player_input();
 
 		if(_input.is_keydown('up')) 		{pi.y=-1;}
-		else if(_input.is_keypressed('down')) 	{}
+//		else if(_input.is_keypressed('down')) 	{}
 
 		if(_input.is_keypressed('left'))	{pi.x=-1;}
 		else if(_input.is_keypressed('right'))	{pi.x=1;}

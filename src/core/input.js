@@ -32,6 +32,7 @@ export class input {
 
 		//This looks like {up: false, down: false...}
 		this.keydowns=create_keymap(_filter_map);
+		this.keydownsguard=create_keymap(_filter_map);
 		this.keyups=create_keymap(_filter_map);
 		this.keypresses=create_keymap(_filter_map);
 
@@ -59,46 +60,39 @@ export class input {
 
 	handle_event(_event, _map, _quick) {
 
-		//TODO: Okay, when the event is down we should prevent repeats...
-		//TODO... Oh well, this is NOT working.
-		//TODO: I can clearly see the problem: the events are not in
-		//sync with the application and can interrupt the flow at any
-		//time... Perhaps we could do a combo of BLOCK-CLEAR-UNLOCK
-		//when we don't allow new events before the controller loop
-		//and we clear the keydowns after it. We could just try.
-
 		if(undefined!==this.reverse_map[_event.keyCode]) {
 
 			let key=this.reverse_map[_event.keyCode];
 
-			//TODO: Check if there's more to do below...
-			if(_quick==='down') {
-				console.log("DOWN "+_event.repeat);
-				if(_event.repeat) {
-					_map[key]=false;
-					return;
-				}
-			}
+			//TODO: Can do better.
+			switch(_quick) {//Equivalent to switch event.type
+				default:
+					_map[key]=true;
+					this.quick_access[_quick]=true;
+				break;
+				case 'up':
+					_map[key]=true;
+					this.quick_access[_quick]=true;
 
-			_map[key]=true;
-			this.quick_access[_quick]=true;
-
-			if(_quick==='up') {
-				this.keydowns[key]=false;
-				this.keypresses[key]=false;
-				this.quick_access['down']=false;
+					this.keydowns[key]=false;
+					this.keypresses[key]=false;
+					this.keydownsguard[key]=false;
+					this.quick_access['down']=false;
+				break;
+				case 'down':
+					_map[key]=!this.keydownsguard[key];
+					this.keydownsguard[key]=true;
+				break;
 			}
 		}
 	}
 
-/*
-	clear() {
+	//!After each loop, keydowns are cleared, as polling speed is fixed
+	//!and may not be in sync with the controllers.
+	clear_keydowns() {
 		clear(this.keydowns);
-		clear(this.keyups);
-		clear(this.keypresses);
 		clear(this.quick_access);
 	}
-*/
 
 	check_event(_key, _map) {
 		if(undefined===_map[_key]) {
