@@ -1,6 +1,14 @@
 # js-engine
 Attempt to make something similar to dfw, but with JS.
 
+# TODO:
+
+- Take a look at js-tile-mapper. See what we can do :).
+	- Add support for custom sets.
+	- Add support for multiple export types.
+- Basic scrolling.
+- Basic async room loading, promise based.
+
 # Dependencies.
 
 If you need to build, you'd better have an updated NodeJS version (and not the 0.10 that came preinstalled with my OS :/). 

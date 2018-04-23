@@ -1,14 +1,10 @@
 "use strict"
 
 import {rect} from '../core/rect.js';
+import {point_2d} from '../core/point_2d.js';
 
-//TODO: Do this right... add it to the core!.
-class point {
-	constructor(_x, _y) {
-		this.x=_x;
-		this.y=_y;
-	}
-};
+const tile_w=32;
+const tile_h=32;
 
 //TODO: Do this right.
 export class draw_tile {
@@ -19,22 +15,32 @@ export class draw_tile {
 	}
 };
 
+//TODO: Perhaps 
 export class tile {
 	constructor(_x, _y, _t) {
 		//TODO: Magic numbers??
-		this.position=new rect(_x*32, _y*32, 32, 32);
+		this.position=new rect(_x*tile_w, _y*tile_h, tile_w, tile_h);
 		this.type=_t;
 	}
 };
 
 export class room {
 
+	//TODO: How should we do this?. Should we have a static function to
+	//build it?
+	
 	constructor() {
 
 		this.w=10;
 		this.h=6;
 
-//TODO: Fuck this!.
+		//Tiles is a hashed map, where the key is the index as returned
+		//by get_index.
+		this.tiles={};
+		this.background=[];
+
+//TODO: This is absolutely terrible. Really, it is... I think we should use
+//an array with a list of coordinates. At least for the final thing.
 		let tiles_arr=[
 0,0,0,0,0,0,0,0,0,1,
 0,0,0,0,0,0,0,0,0,1,
@@ -44,16 +50,8 @@ export class room {
 1,0,0,0,0,1,1,1,1,1,
 ];
 
-		this.tiles=[];
-		//TODO: We're repeating ourselves.
-		tiles_arr.forEach((_item, _index) => {
-			if(_item) {
-				let pt=this.get_point(_index);
-				this.tiles.push(new tile(pt.x, pt.y, _item));
-			}
-		});
-
-//TODO: Fuck this too!. 1 solid, 2 bridge-left, 3 bridge-center, 4- bridge-right
+//TODO: Fuck this too!... 
+// 1 solid, 2 bridge-left, 3 bridge-center, 4- bridge-right
 		let background_arr=[
 0,0,0,0,0,0,0,0,0,1,
 0,0,0,0,0,0,0,0,0,1,
@@ -62,25 +60,45 @@ export class room {
 1,0,0,0,0,0,0,0,0,1,
 1,0,0,0,0,4,1,1,1,1,
 ];
-		this.background=[];
-		background_arr.forEach((_item, _index) => {
-			if(_item) {
-				let pt=this.get_point(_index);
-				this.background.push(new draw_tile(pt.x, pt.y, _item));
-			}
+
+
+		let process=(_source, _fn) => {
+			_source.forEach((_item, _index) => {
+				if(_item) {
+					_fn(this.get_point(_index), _item);
+				}
+			});
+		};
+
+		process(tiles_arr, (_pt, _item) => {
+			this.tiles[this.get_index(_pt.x, _pt.y)]=new tile(_pt.x, _pt.y, _item);
+		});
+		
+		process(background_arr, (_pt, _item) => {
+			this.background.push(new draw_tile(_pt.x, _pt.y, _item));
 		});
 	}
 
 	get_index(_x, _y) {
 		//TODO: Check boundaries.
-		return x + (_y * this.w);
+		return _x + (_y * this.w);
 	}
 
 	get_point(_index) {
-		return new point(_index % this.w, Math.floor(_index / this.w));
+		return new point_2d(_index % this.w, Math.floor(_index / this.w));
 	}
-
-	get_solid_tiles() {
-		return this.tiles;
+	
+	get_tiles_in_rect(_rect) {
+		let result=[];
+		//TODO:
+/*
+		calculate the range of x
+		calculate the range of y
+		for x
+			for y
+				it there exists the tile in x y
+					add it to the result
+*/
+		return result;
 	}
 }

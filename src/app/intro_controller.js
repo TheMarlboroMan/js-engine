@@ -49,9 +49,10 @@ export class intro_controller extends controller {
 		//TODO: What if the player is out of bounds???
 		this.player.save_last_known();
 		this.player.loop_x(_delta);
-		
-//		this.room.tiles.forEach((_item) => { //Cannot break from forEach.
-		for(let i=0; i < this.room.tiles.length; i++) {
+
+		//TODO... Oh well...Time to return an array...
+//		for(let i=0; i < this.room.tiles.length; i++) {
+		for(let i in this.room.tiles) {
 			let _item=this.room.tiles[i];
 			if(this.player.position.collides_with(_item.position)) {
 				this.player.process_collision_x(_item);
@@ -61,7 +62,8 @@ export class intro_controller extends controller {
 
 		this.player.save_last_known();
 		this.player.loop_y(_delta);
-		for(let i=0; i< this.room.tiles.length; i++) {
+//		for(let i=0; i< this.room.tiles.length; i++) {	
+		for(let i in this.room.tiles) {
 			let _item=this.room.tiles[i];
 			if(this.player.position.collides_with(_item.position)) {
 				this.player.process_collision_y(_item);
@@ -74,6 +76,7 @@ export class intro_controller extends controller {
 		display_2d_manipulator.fill(_display_control.display, this.clear_color);
 
 		//TODO: Let us not repeat ourselves.
+		//TODO. 32, 32???? What the fuck is this???
 		let r=function(_x, _y) {return new rect(_x, _y, 32, 32);};
 		let gh=function(_k, _f) {
 			let t=spritesheets.get_hero(_k, _f);
