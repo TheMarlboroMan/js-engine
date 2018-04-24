@@ -3,9 +3,6 @@ Attempt to make something similar to dfw, but with JS.
 
 # TODO:
 
-- Take a look at js-tile-mapper. See what we can do :).
-	- Add support for custom sets.
-	- Add support for multiple export types.
 - Basic scrolling.
 - Basic async room loading, promise based.
 
@@ -34,5 +31,6 @@ Current assets from:
 
 	https://opengameart.org/content/mini-knight
 	https://opengameart.org/content/minimal-sidescroller-tileset_32_0
+	https://opengameart.org/content/generic-platformer-tileset-16x16-background
 
 Thanks a lot :).
