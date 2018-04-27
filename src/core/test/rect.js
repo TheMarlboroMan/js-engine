@@ -27,7 +27,8 @@ class results {
 //!Adds a name to a rect.
 class testrect extends rect {
 	constructor(_n, _x, _y) {
-		super(_x*10, _y*10, 10, 10);
+		let pt=_x*10, _y*10;
+		super(pt, 10, 10);
 		this.name=_n;
 	}
 }

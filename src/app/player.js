@@ -2,6 +2,7 @@
 
 import {rect, pos_left, pos_right, pos_top, pos_bottom} from '../core/rect.js';
 import {vector_2d} from '../core/vector_2d.js';
+import {point_2d} from '../core/point_2d.js';
 
 const player_walking_speed=80.0;
 const player_jump_factor=-100.0;
@@ -17,7 +18,7 @@ export class player {
 
 	constructor() {
 
-		this.position=new rect(0, 0, 8, 16);
+		this.position=new rect(new point_2d(64, 0), 8, 16);
 		this.last_position=this.position.copy();
 		this.vector=new vector_2d();
 		this.remaining_jumps=2;
@@ -44,7 +45,7 @@ export class player {
 	//TODO: We should actually use composition for this.
 	loop_x(_delta) {
 		if(this.vector.x) {
-			this.position.x+=this.vector.x*_delta;
+			this.position.origin.x+=this.vector.x*_delta;
 		}
 	}
 
@@ -54,7 +55,7 @@ export class player {
 		this.do_gravity(_delta, 3.0, 80.0, 200.0);
 
 		if(this.vector.y) {
-			this.position.y+=this.vector.y*_delta;
+			this.position.origin.y+=this.vector.y*_delta;
 		}
 	}
 
@@ -67,8 +68,14 @@ export class player {
 	//TODO: We should actually use composition for this... with callbacks.
 	process_collision_x(_tile) {
 
-		//We always stop...
-		this.vector.x=0.0;
+		//We will stop if we are not in the air...
+		if(!this.vector.y) {
+			this.vector.x=0.0;
+		}
+		else {
+			this.vector.x/=1.05;
+		}
+		
 
 		//And adjust our position.
 		if(this.last_position.is_left_of(_tile.position)) {

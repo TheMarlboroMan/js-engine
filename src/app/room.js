@@ -19,7 +19,8 @@ export class draw_tile {
 //TODO: Perhaps 
 export class tile {
 	constructor(_x, _y, _t) {
-		this.position=new rect(_x*tile_w, _y*tile_h, tile_w, tile_h);
+		let pt=new point_2d(_x*tile_w, _y*tile_h);
+		this.position=new rect(pt, tile_w, tile_h);
 		this.type=_t;
 	}
 };

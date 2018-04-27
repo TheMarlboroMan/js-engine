@@ -46,6 +46,8 @@ function init() {
 		console.log("loading phase done");
 		document.getElementById('btn_stop').addEventListener('click', () => {k.stop();});
 		document.getElementById('btn_start').addEventListener('click', () => {k.start();});
+
+		k.start();
 	});
 }
 

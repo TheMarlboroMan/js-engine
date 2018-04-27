@@ -4,6 +4,7 @@ import {message} from '../core/messages.js';
 import {controller} from '../core/controller.js';
 import {display_2d_manipulator} from '../core/display_2d_manipulator.js';
 import {rgb_color, rgba_color} from '../core/display_tools.js';
+import {point_2d} from '../core/point_2d.js';
 import {rect} from '../core/rect.js';
 import {camera_2d} from '../core/camera_2d.js';
 
@@ -17,7 +18,7 @@ export class game_controller extends controller {
 	constructor() {
 		super();
 		this.clear_color=new rgb_color(0, 0, 0);
-		this.camera=new camera_2d(0,0);
+		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 200));
 		this.room=new room();
 		this.player=new player();
 	}
@@ -75,37 +76,32 @@ export class game_controller extends controller {
 	do_draw(_display_control, _rm) {
 		display_2d_manipulator.fill(_display_control.display, this.clear_color);
 
+		//TODO: The hero is not being drawn.
+
 		//TODO: Let us not repeat ourselves.
-		//TODO. 32, 32???? What the fuck is this???
-		let r=function(_x, _y) {return new rect(_x, _y, 32, 32);};
+		//TODO. No magic numbers...
+		let r=function(_x, _y) {return new rect(new point_2d(_x, _y), 16, 16);};
 		let gh=function(_k, _f) {
 			let t=spritesheets.get_hero(_k, _f);
 			return r(t.x, t.y);
 		};
-		let gs=function(_k, _f) {
-			let t=spritesheets.get_scenery(_k, _f);
-			return r(t.x, t.y);
-		};
+		let gs=function(_k) {return r(_k*16, 0);};
+
+		//TODO: Add limits to camera.
+		this.camera.center_on(this.player.position.origin);
+
+		//TODO: Do not draw what's not needed.
 
 		//Draw the place..
 		this.room.background.forEach((_item) => {
-
-			let key='solid';
-			switch(_item.type) {
-				case 1: key='solid'; break;
-				case 2: key='bridge-left'; break;
-				case 3: key='bridge-center'; break;
-				case 4: key='bridge-right'; break;
-			}
-
-
 			//TODO: Move to another class.
 			//TODO. No magic. 
-			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(key, 0));
+			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(_item.type));
 		});
 
 		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 64));
 		//TODO: These are crude calculations...
+		//TODO: This is not working now...
 		display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), r(this.player.position.x-10, this.player.position.y-16), gh('stand', 0));
 
 	}

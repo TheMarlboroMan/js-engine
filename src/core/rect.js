@@ -1,5 +1,7 @@
 "use strict"
 
+import {point_2d} from './point_2d.js';
+
 const pos_top=0;
 const pos_right=1;
 const pos_bottom=2;
@@ -8,9 +10,11 @@ export {pos_top, pos_right, pos_bottom, pos_left};
 
 //!A rect in screen coordinates (h goes down).
 export class rect {
-	constructor(_x, _y, _w, _h) {
-		this.x=_x;
-		this.y=_y;
+	constructor(_pt, _w, _h) {
+		if(!(_pt instanceof point_2d)) {
+			throw new Error("rect must be built from point_2d");
+		}
+		this.origin=new point_2d(_pt.x, _pt.y);
 		this.w=_w;
 		this.h=_h;
 	}
@@ -20,16 +24,16 @@ export class rect {
 	}
 
 	copy() {
-		return new rect(this.x, this.y, this.w, this.h);
+		return new rect(this.origin, this.w, this.h);
 	}
 
 	//!Adjust this position so it lies on the _pos side of _other.
 	adjust_to(_other, _pos) {
 		switch(_pos) {
-			case pos_top:	this.y=_other.y-this.h; break;
-			case pos_bottom:this.y=_other.y+_other.h; break;
-			case pos_left:	this.x=_other.x+-this.w; break;
-			case pos_right:	this.x=_other.x+_other.w; break;
+			case pos_top:	this.origin.y=_other.origin.y-this.h; break;
+			case pos_bottom:this.origin.y=_other.origin.y+_other.h; break;
+			case pos_left:	this.origin.x=_other.origin.x+-this.w; break;
+			case pos_right:	this.origin.x=_other.origin.x+_other.w; break;
 			default: throw new Error('Unknown position '+_pos+' when calling adjust_to'); break;
 		}
 	}
@@ -56,30 +60,30 @@ export class rect {
 			return !(_e2 <= _p1 || _p2 >= _e1);
 		};
 
-		if(!fn_collision(_a.x, _b.x, _a.x+_a.w, _b.x+_b.w)) {
+		if(!fn_collision(_a.origin.x, _b.origin.x, _a.origin.x+_a.w, _b.origin.x+_b.w)) {
 			return false;
 		}
 
-		return fn_collision(_a.y, _b.y, _a.y+_a.h, _b.y+_b.h);
+		return fn_collision(_a.origin.y, _b.origin.y, _a.origin.y+_a.h, _b.origin.y+_b.h);
 	}
 
 	//!Returns true when _a is under _b, including directly under.
 	static rect_is_under(_a, _b) {
-		return _a.y >= _b.y+_b.h;
+		return _a.origin.y >= _b.origin.y+_b.h;
 	}
 
 	//!Returns true when _a is over _b, including directly over.
 	static rect_is_over(_a, _b) {
-		return _a.y + _a.h <= _b.y;
+		return _a.origin.y + _a.h <= _b.origin.y;
 	}
 
 	//!Returns true when a is to the left of b, including directly at its left.
 	static rect_is_left_of(_a, _b) {
-		return _a.x+_a.w <= _b.x;
+		return _a.origin.x+_a.w <= _b.origin.x;
 	}
 
 	//!Returns true when a is to the right of b,  including directly at its right.
 	static rect_is_right_of(_a, _b) {
-		return _a.x >= _b.x+_b.w;
+		return _a.origin.x >= _b.origin.x+_b.w;
 	}
 }
