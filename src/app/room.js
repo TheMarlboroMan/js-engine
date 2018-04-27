@@ -2,9 +2,10 @@
 
 import {rect} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
+import {map} from './map_loader.js';
 
-const tile_w=32;
-const tile_h=32;
+const tile_w=16;
+const tile_h=16;
 
 //TODO: Do this right.
 export class draw_tile {
@@ -18,7 +19,6 @@ export class draw_tile {
 //TODO: Perhaps 
 export class tile {
 	constructor(_x, _y, _t) {
-		//TODO: Magic numbers??
 		this.position=new rect(_x*tile_w, _y*tile_h, tile_w, tile_h);
 		this.type=_t;
 	}
@@ -31,52 +31,42 @@ export class room {
 	
 	constructor() {
 
-		this.w=10;
-		this.h=6;
+		this.w=0;
+		this.h=0;
 
 		//Tiles is a hashed map, where the key is the index as returned
 		//by get_index.
 		this.tiles={};
 		this.background=[];
+	}
 
-//TODO: This is absolutely terrible. Really, it is... I think we should use
-//an array with a list of coordinates. At least for the final thing.
-		let tiles_arr=[
-0,0,0,0,0,0,0,0,0,1,
-0,0,0,0,0,0,0,0,0,1,
-1,1,1,0,0,1,1,1,0,1,
-1,0,0,0,0,0,0,1,0,1,
-1,0,0,0,0,0,0,0,0,1,
-1,0,0,0,0,1,1,1,1,1,
-];
+	from_map(_map) {
 
-//TODO: Fuck this too!... 
-// 1 solid, 2 bridge-left, 3 bridge-center, 4- bridge-right
-		let background_arr=[
-0,0,0,0,0,0,0,0,0,1,
-0,0,0,0,0,0,0,0,0,1,
-1,2,3,0,0,3,4,1,0,1,
-1,0,0,0,0,0,0,1,0,1,
-1,0,0,0,0,0,0,0,0,1,
-1,0,0,0,0,4,1,1,1,1,
-];
+		if(!(_map instanceof map)) {
+			throw new Error("from_map must be called with a valid map");
+		}
 
+		this.w=_map.w;
+		this.h=_map.h;
 
 		let process=(_source, _fn) => {
-			_source.forEach((_item, _index) => {
+			_source.forEach((_item) => {
 				if(_item) {
-					_fn(this.get_point(_index), _item);
+					_fn(_item.x, _item.y, parseInt(_item.t, 10));
 				}
 			});
 		};
 
-		process(tiles_arr, (_pt, _item) => {
-			this.tiles[this.get_index(_pt.x, _pt.y)]=new tile(_pt.x, _pt.y, _item);
-		});
-		
-		process(background_arr, (_pt, _item) => {
-			this.background.push(new draw_tile(_pt.x, _pt.y, _item));
-		});
+		let fn_tiles=(_x, _y, _t) => {
+			this.tiles[this.get_index(_x, _y)]=new tile(_x, _y, _t);
+		};
+
+		let fn_back=(_x, _y, _t) => {
+			this.background.push(new draw_tile(_x, _y, _t));
+		};
+
+		process(_map.logic, fn_tiles);
+		process(_map.background, fn_back);
 	}
 
 	get_index(_x, _y) {
@@ -84,9 +74,11 @@ export class room {
 		return _x + (_y * this.w);
 	}
 
+/*
 	get_point(_index) {
 		return new point_2d(_index % this.w, Math.floor(_index / this.w));
 	}
+*/
 	
 	get_tiles_in_rect(_rect) {
 		let result=[];

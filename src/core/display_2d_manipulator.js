@@ -10,7 +10,7 @@ export class display_2d_manipulator {
 	static fill(_display, _color) {
 
 		//TODO: Test with rgba...
-		if(!_color instanceof rgb_color) {
+		if(!(_color instanceof rgb_color)) {
 			throw new Error("canvas_manipulator::clear should be called with a color");
 		}
 
@@ -27,7 +27,7 @@ export class display_2d_manipulator {
 
 	static draw_rect(_display, _camera, _rect, _color) {
 		//TODO: Test with rgba...
-		if(!_color instanceof rgb_color || !_rect instanceof rect) {
+		if(!(_color instanceof rgb_color) || !(_rect instanceof rect)) {
 			throw new Error("canvas_manipulator::draw_rect should be called with a color and a rect");
 		}
 
@@ -35,7 +35,7 @@ export class display_2d_manipulator {
 
 		//TODO: Don't repeat yourself...
 		if(null!==_camera) {
-			if(!_camera instanceof camera_2d) {
+			if(!(_camera instanceof camera_2d)) {
 				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");
 			}
 
@@ -71,7 +71,7 @@ export class display_2d_manipulator {
 
 		//TODO: Don't repeat yourself...
 		if(null!==_camera) {
-			if(!_camera instanceof camera_2d) {
+			if(!(_camera instanceof camera_2d)) {
 				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");
 			}
 

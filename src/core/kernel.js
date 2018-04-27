@@ -115,6 +115,7 @@ export class kernel {
 			throw new Error("active controller is not set");
 		}
 
+		this.active_controller.awake();
 		this.started=true;
 		this.input.activate();
 		this.last_step=Date.now();
@@ -146,7 +147,9 @@ export class kernel {
 					throw new Error("State requested '"+requested_state+"' does not exist");
 				}
 
+				this.active_controller.slumber();
 				this.active_controller=this.controllers[requested_state];
+				this.active_controller.awake();
 				this.state_controller.clear_state_change();
 			}
 		}

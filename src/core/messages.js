@@ -11,7 +11,7 @@ We need
 export class message {
 	constructor(_type, _body, _recipients) {
 
-		if(! _recipients instanceof Array) {
+		if(! (_recipients instanceof Array)) {
 			throw new Error("Recipients must be an array");
 		}
 
@@ -48,7 +48,7 @@ export class messenger {
 
 	constructor(_message_queue) {
 
-		if(!message_queue instanceof message_queue) {
+		if(!(_message_queue instanceof message_queue)) {
 			throw new Error("Invalid message_queue for messenger");
 		}
 
@@ -57,7 +57,7 @@ export class messenger {
 	}
 
 	send(_message) {
-		if(! _message instanceof message) {
+		if(!( _message instanceof message)) {
 			throw new Error('Invalid message');
 		}
 

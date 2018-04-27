@@ -18,7 +18,8 @@ import {kernel} from './core/kernel.js';
 import {input_map} from './app/input_map.js';
 import {display_control} from './app/display_control.js';
 import {intro_controller} from './app/intro_controller.js';
-import {main_controller} from './app/main_controller.js';
+import {map_load_controller} from './app/map_load_controller.js';
+import {game_controller} from './app/game_controller.js';
 
 function init() {
 
@@ -27,7 +28,8 @@ function init() {
 	//Load controllers...
 	//TODO: This would be much better with unique tokens.
 	k.inject_controller('intro', new intro_controller());
-	k.inject_controller('main', new main_controller());
+	k.inject_controller('game', new game_controller());
+	k.inject_controller('map_load', new map_load_controller());
 	k.set_active_controller('intro');
 
 	//Setup specific systems: display and input.
@@ -37,7 +39,7 @@ function init() {
 	//TODO: Let these be defined in the app?
 	let resources={
 		'sprites' : 'assets/MiniKnightSet.png',
-		'tiles' : 'assets/tileset_32_0.png'};
+		'tiles' : 'assets/background_16.png'};
 
 	k.init_loading_phase(resources)
 	.then(() => {
@@ -47,23 +49,4 @@ function init() {
 	});
 }
 
-import {map_loader, map} from './app/map_loader.js';
-
-let ml=new map_loader();
-
-//TODO: Fix all !instanceof
-
-ml.load_from_url('assets/map.json')
-.then((_res) => {
-	//TODO: Unsatisfactory: I don't want to delegate the responsibility outside.
-	if(_res instanceof Error) {
-		throw _res;
-	}
-	console.log("A MAP", _res);
-})
-.catch((_err) => {
-	console.error("PROMISE ERR", _err);
-});
-
-
-//init();
+init();
