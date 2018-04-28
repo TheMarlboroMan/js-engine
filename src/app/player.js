@@ -6,6 +6,8 @@ import {point_2d} from '../core/point_2d.js';
 
 const player_walking_speed=80.0;
 const player_jump_factor=-100.0;
+const facing_right=1;
+const facing_left=0;
 
 export class player_input {
 	constructor() {
@@ -23,6 +25,11 @@ export class player {
 		this.vector=new vector_2d();
 		this.remaining_jumps=2;
 		this.jumping=true;
+		this.facing=facing_right;
+	}
+
+	is_facing_right() {
+		return facing_right===this.facing;
 	}
 
 	//TODO: This should be from a parent class.
@@ -35,11 +42,15 @@ export class player {
 	}
 
 	get_input(_input) {
-//document.getElementById('debug').innerHTML=_input.x+" "+_input.y;
+
 		//Disable air control.
 		if(!this.vector.y) {
 			//JS will promote _input.x to float, it seems...
 			this.vector.x=_input.x * player_walking_speed;
+
+			if(_input.x) {
+				this.facing = this.vector.x > 0 ? facing_right : facing_left;
+			}
 		}
 
 		//Double jump... 

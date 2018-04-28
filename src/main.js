@@ -41,6 +41,8 @@ function init() {
 		'sprites' : 'assets/MiniKnightSet.png',
 		'tiles' : 'assets/background_16.png'};
 
+	//TODO: What about the whole audio mess????
+
 	k.init_loading_phase(resources)
 	.then(() => {
 		console.log("loading phase done");

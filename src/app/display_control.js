@@ -6,6 +6,7 @@ export class display_control {
 
 	constructor() {
 		this.display=new display_2d(320, 200, document.getElementById('container'));
+
 		this.display.canvas.focus();
 	}
 }

@@ -26,20 +26,33 @@ export class camera_2d {
 
 		if(null!==this.limits) {
 
+			let pt=_pt.copy();
+
 			if(this.limits.w >= this.position.w) {
-				//TODO: Calculate.
+				if(pt.x < this.limits.origin.x) {
+					pt.x=this.limits.origin.x;
+				}
+				else if(pt.x+this.position.w > this.limits.w) {
+					pt.x=this.limits.w-this.position.w;
+				}
 			}
 			else {
-				//TODO: Center in X.
+				pt.x=(this.limits.w / 2) - (this.w / 2);
 			}
 
 			if(this.limits.h >= this.position.h) {
-				//TODO: Calculate.
+				if(pt.y < this.limits.origin.y) {
+					pt.y=this.limits.origin.y;
+				}
+				else if(pt.y+this.position.h > this.limits.h) {
+					pt.y=this.limits.h-this.position.h;
+				}
 			}
 			else {
-				//TODO: Center in Y.
+				pt.y=(this.limits.h / 2) - (this.h / 2);
 			}
 
+			this.position.origin=pt.copy();
 		}
 		else {
 			this.position.origin=_pt.copy();

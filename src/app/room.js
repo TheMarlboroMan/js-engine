@@ -7,7 +7,7 @@ import {map} from './map_loader.js';
 const tile_w=16;
 const tile_h=16;
 
-//TODO: Do this right.
+//TODO: This should be a bit more complex.
 export class draw_tile {
 	constructor(_x, _y, _t) {
 		this.x=_x;
@@ -16,7 +16,7 @@ export class draw_tile {
 	}
 };
 
-//TODO: Perhaps 
+//TODO: Perhaps in another file???
 export class tile {
 	constructor(_x, _y, _t) {
 		let pt=new point_2d(_x*tile_w, _y*tile_h);
@@ -27,9 +27,6 @@ export class tile {
 
 export class room {
 
-	//TODO: How should we do this?. Should we have a static function to
-	//build it?
-	
 	constructor() {
 
 		this.w=0;
@@ -59,7 +56,7 @@ export class room {
 		};
 
 		let fn_tiles=(_x, _y, _t) => {
-			this.tiles[this.get_index(_x, _y)]=new tile(_x, _y, _t);
+			this.tiles[""+this.get_index(_x, _y)]=new tile(_x, _y, _t);
 		};
 
 		let fn_back=(_x, _y, _t) => {
@@ -82,16 +79,23 @@ export class room {
 */
 	
 	get_tiles_in_rect(_rect) {
+
 		let result=[];
-		//TODO:
-/*
-		calculate the range of x
-		calculate the range of y
-		for x
-			for y
-				it there exists the tile in x y
-					add it to the result
-*/
+
+		let begin_x=Math.floor(_rect.origin.x / tile_w);
+		let begin_y=Math.floor(_rect.origin.y / tile_h);
+		let end_x=Math.floor((_rect.origin.x+_rect.w) / tile_w);
+		let end_y=Math.floor((_rect.origin.y+_rect.h) / tile_h);
+
+		for(let x=begin_x; x <= end_x; x++) {
+			for(let y=begin_y; y <= end_y; y++) {
+				if(undefined!==this.tiles[this.get_index(x, y)]) {
+					result.push(this.tiles[this.get_index(x, y)]);
+				}
+			}
+		}
+//document.getElementById('debug').innerHTML=_rect.origin.x+' / '+tile_w+' = '+(_rect.origin.x / tile_w)+'<br/>'+begin_x+' -> '+end_x+' '+begin_y+' -> '+end_y;
+
 		return result;
 	}
 
