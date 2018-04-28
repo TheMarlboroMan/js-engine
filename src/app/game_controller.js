@@ -27,6 +27,9 @@ export class game_controller extends controller {
 
 		let pi=new player_input();
 
+//gramina 6 gravina 
+//138.00
+
 		//TODO: I'd rather have a key like space...
 		if(_input.is_keydown('space')) 		{pi.y=-1;}
 //		else if(_input.is_keypressed('down')) 	{}

@@ -4,6 +4,7 @@ import {input} from './input.js';
 import {state_controller} from './state_controller.js';
 import {messenger, message_queue} from './messages.js';
 import {resource_manager} from './resource_manager.js';
+import {resource_loader} from './resource_loader.js';
 import {input_keymap_creator} from './input_tools.js';
 
 export class kernel {
@@ -53,16 +54,17 @@ export class kernel {
 		//TODO: Assign.
 	}
 
-	//TODO: Resources should be a class.
-	init_loading_phase(_resources) {
-
-		//TODO: Check the values.
+	init_loading_phase(_resource_loader) {
+		if(!(_resource_loader instanceof resource_loader)) {
+			throw new Error("init_loading_phase expects a resource_loader");
+		}
 
 		let promises=Array();
-		for(let i in _resources) {
+		let images=_resource_loader.irl.resources
+		for(let i in images) {
 			//Oh well...
 			let p=new Promise((_ok, _err) => {
-				return this.resource_manager.load_image(_resources[i], i)
+				return this.resource_manager.load_image(images[i], i)
 					.then((_res) => {_ok(_res);});
 			});
 			promises.push(p);
