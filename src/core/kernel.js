@@ -4,7 +4,7 @@ import {input} from './input.js';
 import {state_controller} from './state_controller.js';
 import {messenger, message_queue} from './messages.js';
 import {resource_manager} from './resource_manager.js';
-import {resource_loader} from './resource_loader.js';
+import {resource_index} from './resource_index.js';
 import {input_keymap_creator} from './input_tools.js';
 
 export class kernel {
@@ -54,18 +54,32 @@ export class kernel {
 		//TODO: Assign.
 	}
 
-	init_loading_phase(_resource_loader) {
-		if(!(_resource_loader instanceof resource_loader)) {
-			throw new Error("init_loading_phase expects a resource_loader");
+	init_loading_phase(_resource_index) {
+		if(!(_resource_index instanceof resource_index)) {
+			throw new Error("init_loading_phase expects a resource_index");
 		}
 
 		let promises=Array();
-		let images=_resource_loader.irl.resources
+
+		//Load images..
+		let images=_resource_index.irl.resources;
 		for(let i in images) {
-			//Oh well...
+//TODO: Why can't I just push them into an array???
 			let p=new Promise((_ok, _err) => {
 				return this.resource_manager.load_image(images[i], i)
-					.then((_res) => {_ok(_res);});
+					.then((_res) => {_ok(_res);})
+					.catch((_res) => {_err(_res);});
+			});
+			promises.push(p);
+		}
+
+		//Load audio...
+		let audio_sources=_resource_index.arl.resources;
+		for(let i in audio_sources) {
+			let p=new Promise((_ok, _err) => {
+				return this.resource_manager.load_audio(audio_sources[i], i)
+					.then((_res) => {_ok(_res);})
+					.catch((_res) => {_err(_res);});
 			});
 			promises.push(p);
 		}
@@ -78,8 +92,7 @@ export class kernel {
 			else {
 				return true;
 			}
-		})
-		.catch((_err) => {console.error('Something failed in the loading phase', _err);});
+		}); //Any catch is done in the main.js file.
 	}
 
 	set_active_controller(_key) {
