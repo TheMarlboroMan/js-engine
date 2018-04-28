@@ -53,7 +53,10 @@ export class kernel {
 		//TODO: Assign.
 	}
 
+	//TODO: Resources should be a class.
 	init_loading_phase(_resources) {
+
+		//TODO: Check the values.
 
 		let promises=Array();
 		for(let i in _resources) {

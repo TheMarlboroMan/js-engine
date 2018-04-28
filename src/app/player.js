@@ -18,10 +18,20 @@ export class player {
 
 	constructor() {
 
-		this.position=new rect(new point_2d(64, 0), 8, 16);
+		this.position=new rect(new point_2d(0, 0), 8, 16);
 		this.last_position=this.position.copy();
 		this.vector=new vector_2d();
 		this.remaining_jumps=2;
+		this.jumping=true;
+	}
+
+	//TODO: This should be from a parent class.
+	move_to(_pt) {
+		if(!(_pt instanceof point_2d)) {
+			throw new Error("move_to must get a point_2d");
+		}
+
+		this.position.origin=_pt.copy();
 	}
 
 	get_input(_input) {
@@ -39,12 +49,19 @@ export class player {
 			this.vector.y=player_jump_factor;
 			//Allow a change of direction.
 			this.vector.x=_input.x * player_walking_speed;
+			this.jumping=true;
 		}
 	}
 
 	//TODO: We should actually use composition for this.
 	loop_x(_delta) {
 		if(this.vector.x) {
+
+			//If not jumping and falling, this decreases horizontal speed.
+			if(!this.jumping && this.vector.y > 0.0) {
+				this.vector.x*=0.9;
+			}
+			
 			this.position.origin.x+=this.vector.x*_delta;
 		}
 	}
@@ -101,6 +118,7 @@ export class player {
 		//Touching the ground.
 		else if(this.last_position.is_over(_tile.position)) {
 			//TODO. Reset function for the jumps. Or better, a callback.
+			this.jumping=false;
 			this.remaining_jumps=2;
 			this.position.adjust_to(_tile.position, pos_top);
 		}

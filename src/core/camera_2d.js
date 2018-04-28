@@ -14,17 +14,36 @@ export class camera_2d {
 			throw new Error("camera_2d must be created from a rect");
 		}
 		this.position=_rect;
+		this.limits=null;
 	}
 
+	//!This is the one and only point that controls camera movement....
 	move_to(_pt) {
 
 		if(!(_pt instanceof point_2d)) {
 			throw new Error("move_to must be invoked with point_2d");
 		}
 
-		//TODO: Validate the possible limits!!!!.
+		if(null!==this.limits) {
 
-		this.position.origin=_pt.copy();
+			if(this.limits.w >= this.position.w) {
+				//TODO: Calculate.
+			}
+			else {
+				//TODO: Center in X.
+			}
+
+			if(this.limits.h >= this.position.h) {
+				//TODO: Calculate.
+			}
+			else {
+				//TODO: Center in Y.
+			}
+
+		}
+		else {
+			this.position.origin=_pt.copy();
+		}
 	}
 
 	move_by(_x, _y) {
@@ -38,5 +57,17 @@ export class camera_2d {
 
 		let center=new point_2d(_pt.x-(this.position.w/2), _pt.y-(this.position.h/2));
 		this.move_to(center);
+	}
+
+	set_limits(_rect) {
+		if(!(_rect instanceof rect)) {
+			throw new Error("set_limits must get a rect");
+		}
+
+		this.limits=_rect;
+	}
+
+	clear_limits() {
+		this.limits=null;
 	}
 }

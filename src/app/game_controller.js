@@ -81,16 +81,15 @@ export class game_controller extends controller {
 		//TODO: Let us not repeat ourselves.
 		//TODO. No magic numbers...
 		let r=function(_x, _y) {return new rect(new point_2d(_x, _y), 16, 16);};
+		let hr=function(_x, _y) {return new rect(new point_2d(_x, _y), 32, 32);};
 		let gh=function(_k, _f) {
 			let t=spritesheets.get_hero(_k, _f);
-			return r(t.x, t.y);
+			return hr(t.x, t.y);
 		};
 		let gs=function(_k) {return r(_k*16, 0);};
 
 		//TODO: Add limits to camera.
 		this.camera.center_on(this.player.position.origin);
-
-		//TODO: Do not draw what's not needed.
 
 		//Draw the place..
 		this.room.background.forEach((_item) => {
@@ -99,18 +98,20 @@ export class game_controller extends controller {
 			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(_item.type));
 		});
 
-		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 64));
+		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 0.5));
 		//TODO: These are crude calculations...
 		//TODO: This is not working now...
-		display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), r(this.player.position.x-10, this.player.position.y-16), gh('stand', 0));
-
+		display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), hr(this.player.position.origin.x-10, this.player.position.origin.y-16), gh('stand', 0));
 	}
 
 	do_receive_message(_message) {
 
 		switch(_message.type) {
 			case 'map_loaded':
-				this.room.from_map(_message.body); break;
+				this.room.from_map(_message.body); 
+				this.camera.set_limits(this.room.get_world_size_rect()); 
+				this.player.move_to(new point_2d(64,0)); //TODO.
+			break;
 		}
 	}
 

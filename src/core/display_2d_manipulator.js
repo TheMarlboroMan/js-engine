@@ -30,19 +30,27 @@ export class display_2d_manipulator {
 		//TODO: Don't draw if outside camera!!!.
 		//TODO: Test that!.
 
-		//TODO: Test with rgba...
-		if(!(_color instanceof rgb_color) || !(_rect instanceof rect)) {
-			throw new Error("canvas_manipulator::draw_rect should be called with a color and a rect");
-		}
-
-		let x=_rect.origin.x, y=_rect.origin.y, w=_rect.w, h=_rect.h;
-
-		//TODO: Don't repeat yourself...
 		if(null!==_camera) {
 			if(!(_camera instanceof camera_2d)) {
 				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");
 			}
 
+			if(!_rect.collides_with(_camera.position)) {
+				return;
+			}
+		}
+
+		//TODO: Test with rgba...
+		if(!(_color instanceof rgb_color) || !(_rect instanceof rect)) {
+			throw new Error("canvas_manipulator::draw_rect should be called with a color and a rect");
+		}
+
+
+
+		let x=_rect.origin.x, y=_rect.origin.y, w=_rect.w, h=_rect.h;
+
+		//TODO: Don't repeat yourself...
+		if(null!==_camera) {
 			x-=parseInt(_camera.position.origin.x, 10);
 			y-=parseInt(_camera.position.origin.y, 10);
 		}
@@ -62,6 +70,16 @@ export class display_2d_manipulator {
 
 		//TODO: Don't draw if outside camera!!!.
 		//TODO: Test that!.
+
+		if(null!==_camera) {
+			if(!(_camera instanceof camera_2d)) {
+				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");
+			}
+
+			if(!_rect_pos.collides_with(_camera.position)) {
+				return;
+			}
+		}
 
 		if(!(_rect_pos instanceof rect)) {
 			throw new Error("_rect_pos for draw_sprite must be a rect");
@@ -87,10 +105,6 @@ export class display_2d_manipulator {
 
 		//TODO: Don't repeat yourself...
 		if(null!==_camera) {
-			if(!(_camera instanceof camera_2d)) {
-				throw new Error("_camera parameter must be a camera object "+typeof _camera+" given");
-			}
-
 			dx-=parseInt(_camera.position.origin.x, 10);
 			dy-=parseInt(_camera.position.origin.y, 10);
 		}
@@ -99,6 +113,8 @@ export class display_2d_manipulator {
 //		throw new Error("shit!");
 	}
 
+	static check_camera_limits() {
 
+	}
 
 }

@@ -94,4 +94,8 @@ export class room {
 */
 		return result;
 	}
+
+	get_world_size_rect() {
+		return new rect(new point_2d(0,0), this.w*tile_w, this.h*tile_h);
+	}
 }
