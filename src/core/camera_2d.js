@@ -25,7 +25,6 @@ export class camera_2d {
 		}
 
 		if(null!==this.limits) {
-
 			let pt=_pt.copy();
 
 			if(this.limits.w >= this.position.w) {
@@ -37,7 +36,7 @@ export class camera_2d {
 				}
 			}
 			else {
-				pt.x=(this.limits.w / 2) - (this.w / 2);
+				pt.x=(this.limits.w / 2) - (this.position.w / 2);
 			}
 
 			if(this.limits.h >= this.position.h) {
@@ -49,7 +48,7 @@ export class camera_2d {
 				}
 			}
 			else {
-				pt.y=(this.limits.h / 2) - (this.h / 2);
+				pt.y=(this.limits.h / 2) - (this.position.h / 2);
 			}
 
 			this.position.origin=pt.copy();

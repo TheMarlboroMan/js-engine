@@ -50,7 +50,7 @@ export class room {
 		let process=(_source, _fn) => {
 			_source.forEach((_item) => {
 				if(_item) {
-					_fn(_item.x, _item.y, parseInt(_item.t, 10));
+					_fn(_item.x, _item.y, _item.t);
 				}
 			});
 		};

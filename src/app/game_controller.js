@@ -67,6 +67,8 @@ export class game_controller extends controller {
 	do_draw(_display_control, _rm) {
 		display_2d_manipulator.fill(_display_control.display, this.clear_color);
 
+		this.camera.center_on(this.player.position.origin);
+
 		//TODO: This is awful.
 		//TODO: Let us not repeat ourselves.
 		//TODO. No magic numbers...
@@ -76,9 +78,12 @@ export class game_controller extends controller {
 			let t=spritesheets.get_hero(_k, _f);
 			return hr(t.x, t.y);
 		};
-		let gs=function(_k) {return r(_k*16, 0);};
+		let gs=function(_k) {
+			let y=Math.floor(_k / 7);
+			let x=_k % 7;
 
-		this.camera.center_on(this.player.position.origin);
+			return r(x*16, y*16);
+		};
 
 		//Draw the place..
 		this.room.background.forEach((_item) => {

@@ -142,6 +142,7 @@ export class kernel {
 	}
 
 	loop(_delta) {
+//TODO: EXCEPTIONS ARE BEING SWALLOWED!!
 		try {
 			var now=Date.now();
 			this.delta=(now-this.last_step) / 1000.0;

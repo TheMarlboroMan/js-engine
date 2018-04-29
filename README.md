@@ -43,4 +43,6 @@ Current assets from:
 	https://opengameart.org/content/minimal-sidescroller-tileset_32_0
 	https://opengameart.org/content/generic-platformer-tileset-16x16-background
 
+//TODO: Add the sounds here too...
+
 Thanks a lot :).
