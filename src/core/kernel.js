@@ -11,7 +11,7 @@ export class kernel {
 
 	constructor() {
 		this.last_step=null;
-		this.loop_interval=null;
+		this.loop_timeout=null;
 		this.display_control=null;
 		this.input=null;
 		this.controllers={};
@@ -115,8 +115,9 @@ export class kernel {
 			throw new Error("kernel was not started");
 		}
 
+		console.log("Stopping...");
 		this.input.deactivate();
-		clearInterval(this.loop_interval);
+		clearTimeout(this.loop_timeout);
 		cancelAnimationFrame(null);
 	}
 
@@ -137,12 +138,11 @@ export class kernel {
 		this.started=true;
 		this.input.activate();
 		this.last_step=Date.now();
-		this.loop_interval=setInterval(()=>{this.loop()}, 16.666);
+		this.loop_timeout=setTimeout(()=>{this.loop()}, 16.666);
 		requestAnimationFrame( () => {this.draw();});
 	}
 
 	loop(_delta) {
-//TODO: EXCEPTIONS ARE BEING SWALLOWED!!
 		try {
 			var now=Date.now();
 			this.delta=(now-this.last_step) / 1000.0;
@@ -171,17 +171,25 @@ export class kernel {
 				this.active_controller.awake();
 				this.state_controller.clear_state_change();
 			}
+
+			this.loop_timeout=setTimeout(()=>{this.loop()}, 16.666);
 		}
 		catch(_error) {
 			console.error(_error);
-			console.log("Stopping...");
 			this.stop();
 		}
 	}
 
+	//!This is basically a different stack, so it needs its own try-catch.
 	draw() {
-		this.active_controller.do_draw(this.display_control, this.resource_manager);
-		requestAnimationFrame( () => {this.draw();}); 
+		try {
+			this.active_controller.do_draw(this.display_control, this.resource_manager);
+			requestAnimationFrame( () => {this.draw();}); 
+		}
+		catch(_error) {
+			console.error(_error);
+			this.stop();
+		}
 	}
 
 	dispatch_messages() {

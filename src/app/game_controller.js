@@ -24,7 +24,6 @@ export class game_controller extends controller {
 	}
 
 	do_step(_delta, _input) {
-
 		let pi=new player_input();
 
 		if(_input.is_keydown('space')) 		{pi.y=-1;}
