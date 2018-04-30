@@ -55,21 +55,21 @@ export class player {
 
 		//Double jump... 
 		//TODO: Can jump twice while falling. Don't like it.
-		if(_input.y < 0 && /*this.vector.y==0.0* &&*/ this.remaining_jumps) {
+		if(_input.y && this.remaining_jumps) {
 			--this.remaining_jumps;
 			this.vector.y=player_jump_factor;
 			//Allow a change of direction.
 			this.vector.x=_input.x * player_walking_speed;
 			this.jumping=true;
 	
-			//TODO: Shit
-			//TODO: Audio doesn't play the first time. Shit.
-			//TODO: Audio makes everything go slow.
+			//TODO: Shit. This is shit.
+			//TODO: Audio makes everything go slow... I guess it is this computer.
 			_audio.play("assets/audio/3.wav");
 		}
 	}
 
 	//TODO: We should actually use composition for this.
+	//TODO: Go ahead... tell me how this composition would be implemented.
 	loop_x(_delta) {
 		if(this.vector.x) {
 
@@ -108,7 +108,6 @@ export class player {
 		else {
 			this.vector.x/=1.05;
 		}
-		
 
 		//And adjust our position.
 		if(this.last_position.is_left_of(_tile.position)) {
@@ -133,9 +132,7 @@ export class player {
 		}
 		//Touching the ground.
 		else if(this.last_position.is_over(_tile.position)) {
-			//TODO. Reset function for the jumps. Or better, a callback.
-			this.jumping=false;
-			this.remaining_jumps=2;
+			this.touch_ground();
 			this.position.adjust_to(_tile.position, pos_top);
 		}
 		else {
@@ -145,5 +142,11 @@ export class player {
 
 	save_last_known() {
 		this.last_position=this.position.copy();
+	}
+
+	touch_ground() {
+		//TODO: Perhaps... on_ground=true?.
+		this.jumping=false;
+		this.remaining_jumps=2;
 	}
 }

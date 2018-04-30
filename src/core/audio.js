@@ -1,5 +1,7 @@
 "use strict"
 
+//TODO: What about volumes?
+
 export class audio_channel {
 	constructor(_index) {
 		this.index=_index;
@@ -13,8 +15,12 @@ export class audio_channel {
 		return !this.playing;
 	}
 
+	//!_v must be between 0 and 1.
+	set_volume(_v) {
+		this.audio.volume=_v;
+	}
+
 	play(_source, _looped) {
-		//TODO: Use the resolver here,
 		this.audio.src=_source;
 		this.audio.loop=_looped;
 		this.audio.play();
@@ -25,7 +31,9 @@ export class audio_channel {
 		this.playing=false;
 	}
 
+	
 	stop() {
+		this.audio.pause();
 		this.on_stop();
 	}
 }

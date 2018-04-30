@@ -18,6 +18,7 @@ export class resource_manager {
 
 			let img=new Image();
 			//TODO: Use events...
+			//TODO: Add error.
 			img.onload=function() {_ok(this);}
 			img.onerror=function() {_err(this);}
 			img.src=_src;
@@ -34,6 +35,9 @@ export class resource_manager {
 			let a=new Audio();
 			a.preload='auto';
 			let fn=(_res) => {
+				a.volume=0;
+				a.play();
+				a.pause();
 				a.removeEventListener('canplaythrough', ev, true);
 				a.removeEventListener('error', everr, true);
 				_ok(_res);
@@ -43,7 +47,6 @@ export class resource_manager {
 				a.removeEventListener('error', everr, true);
 				_err(_res);
 			}
-			//TODO: Should add error to all resources!!.
 			let ev=a.addEventListener('canplaythrough', fn, true);
 			let everr=a.addEventListener('error', fn_err, true);
 			a.src=_src;
@@ -51,7 +54,6 @@ export class resource_manager {
 		.then((_loaded_audio) => {
 			this.audio[_key]=_loaded_audio;
 			return true;
-			//TODO.
 		});
 	}
 
