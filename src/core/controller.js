@@ -25,7 +25,7 @@ export class controller {
 		this.messenger=_messenger;
 	}
 
-	do_step(_delta, _input) {
+	do_step(_delta, _input, _audio) {
 		//Implemented by the derived class.
 	}
 

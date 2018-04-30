@@ -14,7 +14,7 @@ export class map_load_controller extends controller {
 		this.status=0;
 	}
 
-	do_step(_delta, _input) {
+	do_step(_delta, _input, _audio) {
 		switch(this.status) {
 			case 1:
 				this.messenger.send(new message('map_loaded', this.map, ['game']));

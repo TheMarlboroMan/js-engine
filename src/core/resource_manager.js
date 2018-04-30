@@ -32,7 +32,7 @@ export class resource_manager {
 
 		return new Promise((_ok, _err) => {
 			let a=new Audio();
-			a.preload='auto'; //This makes magic.
+			a.preload='auto';
 			let fn=(_res) => {
 				a.removeEventListener('canplaythrough', ev, true);
 				a.removeEventListener('error', everr, true);

@@ -6,6 +6,7 @@ import {messenger, message_queue} from './messages.js';
 import {resource_manager} from './resource_manager.js';
 import {resource_index} from './resource_index.js';
 import {input_keymap_creator} from './input_tools.js';
+import {audio_manager} from './audio.js';
 
 export class kernel {
 
@@ -17,6 +18,7 @@ export class kernel {
 		this.controllers={};
 		this.active_controller=null;
 		this.app_resource_load_class=null;
+		this.audio=null;
 
 		this.running=false;
 
@@ -36,6 +38,9 @@ export class kernel {
 		}
 
 		this.input=new input(ifc.get_keymap());
+
+		//TODO: How do I parametrise this???
+		this.audio=new audio_manager(8);
 	}
 
 	inject_controller(_key, _controller) {
@@ -54,7 +59,9 @@ export class kernel {
 		//TODO: Assign.
 	}
 
+	//!Must be called after "setup". 
 	init_loading_phase(_resource_index) {
+
 		if(!(_resource_index instanceof resource_index)) {
 			throw new Error("init_loading_phase expects a resource_index");
 		}
@@ -151,7 +158,7 @@ export class kernel {
 			//TODO: Maybe this should be setup too...
 			if(this.delta > 50.0) this.delta=50.0;
 
-			this.active_controller.do_step(this.delta, this.input);
+			this.active_controller.do_step(this.delta, this.input, this.audio);
 			this.input.clear_keydowns(); //It doesn't work like this...
 
 			if(this.message_queue.get_length()) {

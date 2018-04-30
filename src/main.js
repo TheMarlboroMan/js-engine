@@ -39,6 +39,7 @@ function init() {
 		k.set_active_controller('intro');
 
 		//Setup specific systems: display and input.
+
 		k.setup(new display_control(), input_map);
 
 		k.init_loading_phase(new resource_index())

@@ -13,7 +13,7 @@ export class intro_controller extends controller {
 		this.sent=false;
 	}
 
-	do_step(_delta, _input) {
+	do_step(_delta, _input, _audio) {
 
 		if(!this.sent) {
 

@@ -23,7 +23,10 @@ export class game_controller extends controller {
 		this.player=new player();
 	}
 
-	do_step(_delta, _input) {
+	do_step(_delta, _input, _audio) {
+
+		//TODO: WHAT ABOUT THE AUDIO??? I WANT TO TEST THAT!!!
+
 		let pi=new player_input();
 
 		if(_input.is_keydown('space')) 		{pi.y=-1;}
@@ -32,7 +35,8 @@ export class game_controller extends controller {
 		if(_input.is_keypressed('left'))	{pi.x=-1;}
 		else if(_input.is_keypressed('right'))	{pi.x=1;}
 
-		this.player.get_input(pi);
+		//TODO: This is SHIT!. Do it better damn it!.
+		this.player.get_input(pi, _audio);
 
 		//TODO: Check the space below the player... is it free?
 		//Do gravity and jump checks.

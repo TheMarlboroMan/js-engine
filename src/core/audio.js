@@ -1,4 +1,4 @@
-use "strict"
+"use strict"
 
 export class audio_channel {
 	constructor(_index) {
@@ -13,8 +13,8 @@ export class audio_channel {
 		return !this.playing;
 	}
 
-	play(_key, _looped) {
-		//TODO: Resolve key to audio file.
+	play(_source, _looped) {
+		//TODO: Use the resolver here,
 		this.audio.src=_source;
 		this.audio.loop=_looped;
 		this.audio.play();
@@ -38,14 +38,13 @@ export class audio_manager {
 		}
 	}
 
-	//TODO: This should really be a key.
-	play(_key, _looped=false) {
+	play(_source, _looped=false) {
 
 		let cn=this.get_idle_channel();
 		if(!cn) {
 			return false;
 		}
-		cn.play(_key, _looped);
+		cn.play(_source, _looped);
 		return cn.index;
 	}
 

@@ -41,7 +41,7 @@ export class player {
 		this.position.origin=_pt.copy();
 	}
 
-	get_input(_input) {
+	get_input(_input, _audio) {
 
 		//Disable air control.
 		if(!this.vector.y) {
@@ -61,6 +61,11 @@ export class player {
 			//Allow a change of direction.
 			this.vector.x=_input.x * player_walking_speed;
 			this.jumping=true;
+	
+			//TODO: Shit
+			//TODO: Audio doesn't play the first time. Shit.
+			//TODO: Audio makes everything go slow.
+			_audio.play("assets/audio/3.wav");
 		}
 	}
 
