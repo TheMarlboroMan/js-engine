@@ -37,30 +37,10 @@ export class game_controller extends controller {
 		//TODO: Check the space below the player... is it free?
 		//Do gravity and jump checks.
 
-		//TODO: What if the player is out of bounds???
-		this.player.save_last_known();
-		this.player.loop_x(_delta);
+		//TODO: Fix "I can jump while falling".
 
-		let tiles=this.room.get_tiles_in_rect(this.player.position);
-		for(let i=0; i<tiles.length; i++) {
-			let _item=tiles[i];
-			if(this.player.position.collides_with(_item.position)) {
-				this.player.process_collision_x(_item);
-				break;
-			}
-		}
-
-		this.player.save_last_known();
-		this.player.loop_y(_delta);
-
-		tiles=this.room.get_tiles_in_rect(this.player.position);
-		for(let i=0; i<tiles.length; i++) {
-			let _item=tiles[i];
-			if(this.player.position.collides_with(_item.position)) {
-				this.player.process_collision_y(_item);
-				break;
-			}
-		};
+		this.do_player_loop(_delta, player.prototype.loop_x, player.prototype.process_collision_x);
+		this.do_player_loop(_delta, player.prototype.loop_y, player.prototype.process_collision_y);
 	}
 
 	do_draw(_display_control, _rm) {
@@ -104,7 +84,8 @@ export class game_controller extends controller {
 			case 'map_loaded':
 				this.room.from_map(_message.body); 
 				this.camera.set_limits(this.room.get_world_size_rect()); 
-				//TODO.Add a logic to the exit.
+
+				//TODO.Add a logic to the exit. This will be my next step.
 //				this.player.move_to(new point_2d(64,0));
 				this.player.move_to(new point_2d(32,0));
 			break;
@@ -117,5 +98,29 @@ export class game_controller extends controller {
 
 	slumber() {
 		console.log("game goes to slumber");
+	}
+
+	/////
+
+	//!Does the whole player loop.
+	do_player_loop(_delta, _fn_loop, _fn_collision) {
+
+		this.player.save_last_known();
+
+		_fn_loop.call(this.player, _delta);
+
+		//We get the tiles and filter the real collisions, in case we have irregular-shaped tiles.
+		let tiles=this.room.get_tiles_in_rect(this.player.position)
+			.filter((_item) => {return this.player.position.collides_with(_item.position);});
+
+		if(tiles.length) {
+			if(tiles.every((_item) => {return _item.is_deadly();})) {
+				//TODO: This is good!!!.
+				console.log("PLAYER CROAKED!!");
+			}
+			else {
+				_fn_collision.call(this.player, tiles.shift());
+			}
+		}
 	}
 }

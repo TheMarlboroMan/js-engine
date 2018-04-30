@@ -23,6 +23,11 @@ export class tile {
 		this.position=new rect(pt, tile_w, tile_h);
 		this.type=_t;
 	}
+
+	is_deadly() {
+		//TODO: No fucking magic.
+		return this.type==5;
+	}
 };
 
 export class room {
