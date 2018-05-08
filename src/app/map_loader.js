@@ -5,8 +5,9 @@ export class map {
 		this.failed=true;
 		this.w=0;
 		this.h=0;
-		this.logic={};
-		this.background={};
+		this.logic=[];
+		this.objects=[];
+		this.background=[];
 	}
 }
 
@@ -29,7 +30,8 @@ export class map_loader {
 		result.w=_data.tablas[0].w;
 		result.h=_data.tablas[0].h;
 		result.logic=_data.tablas[0].celdas.filter((_item) => {return _item.t!=0;});
-		result.background=_data.tablas[1].celdas.filter((_item) => {return _item.t!=0;});
+		result.objects=_data.tablas[1].celdas.filter((_item) => {return _item.t!=0;});
+		result.background=_data.tablas[2].celdas.filter((_item) => {return _item.t!=0;});
 		return result;
 	}
 
