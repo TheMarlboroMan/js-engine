@@ -5,7 +5,7 @@ import {controller} from '../core/controller.js';
 import {display_2d_manipulator, invert_none, invert_x} from '../core/display_2d_manipulator.js';
 import {rgb_color, rgba_color} from '../core/display_tools.js';
 import {point_2d} from '../core/point_2d.js';
-import {rect} from '../core/rect.js';
+import {rect, pos_inner_bottom, pos_inner_left} from '../core/rect.js';
 import {camera_2d} from '../core/camera_2d.js';
 
 import {spritesheets} from './spritesheets.js';
@@ -21,6 +21,8 @@ export class game_controller extends controller {
 		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 200));
 		this.room=new room();
 		this.player=new player();
+
+		this.entry_id=1;
 	}
 
 	do_step(_delta, _input, _audio) {
@@ -88,10 +90,10 @@ export class game_controller extends controller {
 			case 'map_loaded':
 				this.room.from_map(_message.body); 
 				this.camera.set_limits(this.room.get_world_size_rect()); 
-
-				//TODO.Add a logic to the exit. This will be my next step.
-//				this.player.move_to(new point_2d(64,0));
-				this.player.move_to(new point_2d(32,0));
+				//TODO: Do not repeat yourself.
+				let entry_box=this.room.get_entry_by_id(this.entry_id).get_position();
+				this.player.adjust_to(entry_box, pos_inner_bottom);
+				this.player.adjust_to(entry_box, pos_inner_left);
 			break;
 		}
 	}
@@ -119,12 +121,27 @@ export class game_controller extends controller {
 
 		if(tiles.length) {
 			if(tiles.every((_item) => {return _item.is_deadly();})) {
-				//TODO: This is good!!!.
 				console.log("PLAYER CROAKED!!");
+				//TODO... Do not repeat yourself...
+				let entry_box=this.room.get_entry_by_id(this.entry_id).get_position();
+				this.player.adjust_to(entry_box, pos_inner_bottom);
+				this.player.adjust_to(entry_box, pos_inner_left);
+				this.player.stop();
 			}
 			else {
 				_fn_collision.call(this.player, tiles.shift());
 			}
 		}
+
+		let objects=this.room.get_map_objects_in_rect(this.player.position);
+		if(objects.length) {
+
+			//TODO...
+			this.entry_id=objects[0].entry_id;
+			this.state_controller.request_state_change("map_load");
+			this.messenger.send(new message('load_map', objects[0].destination, ['map_load']));
+			return;
+		}
+
 	}
 }

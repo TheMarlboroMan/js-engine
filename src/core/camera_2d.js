@@ -25,7 +25,7 @@ export class camera_2d {
 		}
 
 		if(null!==this.limits) {
-			let pt=_pt.copy();
+			let pt=_pt.clone();
 
 			if(this.limits.w >= this.position.w) {
 				if(pt.x < this.limits.origin.x) {
@@ -51,10 +51,10 @@ export class camera_2d {
 				pt.y=(this.limits.h / 2) - (this.position.h / 2);
 			}
 
-			this.position.origin=pt.copy();
+			this.position.origin=pt.clone();
 		}
 		else {
-			this.position.origin=_pt.copy();
+			this.position.origin=_pt.clone();
 		}
 	}
 

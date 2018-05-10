@@ -6,7 +6,8 @@ export class display_control {
 
 	constructor() {
 
-		this.display=new display_2d(320, 200, document.getElementById('container'));
+		//Fits a world of 20x13 in 16x16... Can be done 22x15 so there are hard limits.
+		this.display=new display_2d(320, 208, document.getElementById('container'));
 		this.display.canvas.focus();
 	}
 }

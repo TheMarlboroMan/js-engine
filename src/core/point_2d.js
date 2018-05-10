@@ -6,7 +6,7 @@ export class point_2d {
 		this.y=_y;
 	}
 
-	copy() {
+	clone() {
 		return new point_2d(this.x, this.y);
 	}
 };

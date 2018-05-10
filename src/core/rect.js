@@ -6,7 +6,11 @@ const pos_top=0;
 const pos_right=1;
 const pos_bottom=2;
 const pos_left=3;
-export {pos_top, pos_right, pos_bottom, pos_left};
+const pos_inner_top=4;
+const pos_inner_right=5;
+const pos_inner_bottom=6;
+const pos_inner_left=7;
+export {pos_top, pos_right, pos_bottom, pos_left, pos_inner_bottom, pos_inner_left, pos_inner_right, pos_inner_top};
 
 //!A rect in screen coordinates (h goes down).
 export class rect {
@@ -23,17 +27,21 @@ export class rect {
 		return rect.rects_collide(this, _other);
 	}
 
-	copy() {
+	clone() {
 		return new rect(this.origin, this.w, this.h);
 	}
 
 	//!Adjust this position so it lies on the _pos side of _other.
 	adjust_to(_other, _pos) {
 		switch(_pos) {
-			case pos_top:	this.origin.y=_other.origin.y-this.h; break;
-			case pos_bottom:this.origin.y=_other.origin.y+_other.h; break;
-			case pos_left:	this.origin.x=_other.origin.x+-this.w; break;
-			case pos_right:	this.origin.x=_other.origin.x+_other.w; break;
+			case pos_top:		this.origin.y=_other.origin.y-this.h; break;
+			case pos_bottom:	this.origin.y=_other.origin.y+_other.h; break;
+			case pos_left:		this.origin.x=_other.origin.x+-this.w; break;
+			case pos_right:		this.origin.x=_other.origin.x+_other.w; break;
+			case pos_inner_top:	this.origin.y=_other.origin.y; break;
+			case pos_inner_bottom:	this.origin.y=_other.origin.y+_other.h-this.h; break;
+			case pos_inner_left:	this.origin.x=_other.origin.x; break;
+			case pos_inner_right:	this.origin.x=_other.origin.x+_other.w-this.w; break;
 			default: throw new Error('Unknown position '+_pos+' when calling adjust_to'); break;
 		}
 	}

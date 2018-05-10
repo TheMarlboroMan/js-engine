@@ -16,7 +16,10 @@ export class map_load_controller extends controller {
 
 	do_step(_delta, _input, _audio) {
 		switch(this.status) {
-			case 1:
+			case 0: //Loading
+
+			break;
+			case 1:	//Loaded...
 				this.messenger.send(new message('map_loaded', this.map, ['game']));
 				this.map=null;
 				this.status=0;
@@ -32,10 +35,12 @@ export class map_load_controller extends controller {
 	do_receive_message(_message) {
 		switch(_message.type) {
 			case 'load_map':
-				map_loader.load_from_url(_message.body)
+				this.status=0;
+				let mapname='assets/'+_message.body+'.json';
+				map_loader.load_from_url(mapname)
 				.then((_map) => {
 					if(_map.failed) {
-						throw new Error("Could not load the map");
+						throw new Error("Could not load the map "+mapname);
 					}
 					else {
 						this.status=1;

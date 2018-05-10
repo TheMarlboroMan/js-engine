@@ -21,11 +21,16 @@ export class player {
 	constructor() {
 
 		this.position=new rect(new point_2d(0, 0), 8, 16);
-		this.last_position=this.position.copy();
+		this.last_position=this.position.clone();
 		this.vector=new vector_2d();
 		this.remaining_jumps=2;
 		this.jumping=true;
 		this.facing=facing_right;
+	}
+
+	stop() {
+		this.vector.x=0.0;
+		this.vector.y=0.0;
 	}
 
 	is_facing_right() {
@@ -38,7 +43,12 @@ export class player {
 			throw new Error("move_to must get a point_2d");
 		}
 
-		this.position.origin=_pt.copy();
+		this.position.origin=_pt.clone();
+	}
+
+	//TODO: Same
+	adjust_to(_rect, _type) {
+		this.position.adjust_to(_rect, _type);
 	}
 
 	get_input(_input, _audio) {
@@ -141,7 +151,7 @@ export class player {
 	}
 
 	save_last_known() {
-		this.last_position=this.position.copy();
+		this.last_position=this.position.clone();
 	}
 
 	touch_ground() {

@@ -18,7 +18,7 @@ export class intro_controller extends controller {
 		if(!this.sent) {
 
 			this.sent=true;
-			this.messenger.send(new message('load_map', 'assets/map01.json', ['map_load']));
+			this.messenger.send(new message('load_map', 'map01', ['map_load']));
 			this.state_controller.request_state_change("map_load");
 		}
 	}

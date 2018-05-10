@@ -27,6 +27,7 @@ export class map_loader {
 	static parse_map(_data) {
 		let result=new map();
 		map.failed=false;
+
 		result.w=_data.tablas[0].w;
 		result.h=_data.tablas[0].h;
 		result.logic=_data.tablas[0].celdas.filter((_item) => {return _item.t!=0;});

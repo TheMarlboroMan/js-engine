@@ -22,14 +22,14 @@ export class vector_2d {
 
 	//TODO: I am sure this is wrong. For many reasons.
 	integrate_y(_delta, _factor) {
-//		let copy=this.copy();
+//		let copy=this.clone();
 		this.y+=_factor * _delta;
 //		this.add_value(_factor * _delta);
 		//TODO: What the hell is this returning???? A vector... 
 //		return (copy + vec) * 0.5 * _delta;
 	}
 
-	copy() {
+	clone() {
 		return new vector_2d(this.x, this.y);
 	}
 };
