@@ -178,6 +178,7 @@ export class room {
 	}
 
 	get_world_size_rect() {
-		return new rect(new point_2d(tile_w,tile_h), (this.w-1)*tile_w, (this.h-1)*tile_h);
+console.log(this.w, 'as w');
+		return new rect(new point_2d(tile_w,tile_h), (this.w-2)*tile_w, (this.h-2)*tile_h);
 	}
 }

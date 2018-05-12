@@ -17,6 +17,8 @@ export class camera_2d {
 		this.limits=null;
 	}
 
+	
+
 	//!This is the one and only point that controls camera movement....
 	move_to(_pt) {
 
@@ -31,11 +33,12 @@ export class camera_2d {
 				if(pt.x < this.limits.origin.x) {
 					pt.x=this.limits.origin.x;
 				}
-				else if(pt.x+this.position.w > this.limits.w) {
-					pt.x=this.limits.w-this.position.w;
+				else if(pt.x+this.position.w > this.limits.origin.x+this.limits.w) {
+					pt.x=this.limits.w+this.limits.origin.x-this.position.w;
 				}
 			}
 			else {
+//TODO: This is likely badly calculated.
 				pt.x=(this.limits.w / 2) - (this.position.w / 2);
 			}
 
@@ -43,11 +46,12 @@ export class camera_2d {
 				if(pt.y < this.limits.origin.y) {
 					pt.y=this.limits.origin.y;
 				}
-				else if(pt.y+this.position.h > this.limits.h) {
-					pt.y=this.limits.h-this.position.h;
+				else if(pt.y+this.position.h > this.limits.origin.y+this.limits.h) {
+					pt.y=this.limits.h+this.limits.origin.y-this.position.h;
 				}
 			}
 			else {
+//TODO: This is likely badly calculated.
 				pt.y=(this.limits.h / 2) - (this.position.h / 2);
 			}
 

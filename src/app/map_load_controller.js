@@ -36,7 +36,7 @@ export class map_load_controller extends controller {
 		switch(_message.type) {
 			case 'load_map':
 				this.status=0;
-				let mapname='assets/'+_message.body+'.json';
+				let mapname='assets/maps/'+_message.body+'.json';
 				map_loader.load_from_url(mapname)
 				.then((_map) => {
 					if(_map.failed) {
@@ -47,7 +47,7 @@ export class map_load_controller extends controller {
 						this.map=_map;
 					}
 				});
-	//TODO Where's the catch nigga???
+	//TODO Where's the catch dude???
 			break;
 		}
 	}

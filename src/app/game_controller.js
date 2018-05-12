@@ -18,7 +18,7 @@ export class game_controller extends controller {
 	constructor() {
 		super();
 		this.clear_color=new rgb_color(0, 0, 0);
-		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 200));
+		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 208));
 		this.room=new room();
 		this.player=new player();
 
