@@ -27,35 +27,28 @@ export class camera_2d {
 		}
 
 		if(null!==this.limits) {
-			let pt=_pt.clone();
 
-			if(this.limits.w >= this.position.w) {
-				if(pt.x < this.limits.origin.x) {
-					pt.x=this.limits.origin.x;
+			let fn=(_lim_pos, _lim_dim, _dim, _ptn) => {
+				if(_lim_dim >= _dim) {
+					if(_ptn < _lim_pos) { //Left/topmost side.
+						return _lim_pos
+					}
+					else if(_ptn+_dim > _lim_pos+_lim_dim) {
+						return _lim_dim+_lim_pos-_dim;
+					}
+					else {
+						return _ptn;
+					}
 				}
-				else if(pt.x+this.position.w > this.limits.origin.x+this.limits.w) {
-					pt.x=this.limits.w+this.limits.origin.x-this.position.w;
+				else {
+					return _lim_pos+(_lim_dim / 2) - (_dim / 2);
 				}
-			}
-			else {
-//TODO: This is likely badly calculated.
-				pt.x=(this.limits.w / 2) - (this.position.w / 2);
-			}
+			};
 
-			if(this.limits.h >= this.position.h) {
-				if(pt.y < this.limits.origin.y) {
-					pt.y=this.limits.origin.y;
-				}
-				else if(pt.y+this.position.h > this.limits.origin.y+this.limits.h) {
-					pt.y=this.limits.h+this.limits.origin.y-this.position.h;
-				}
-			}
-			else {
-//TODO: This is likely badly calculated.
-				pt.y=(this.limits.h / 2) - (this.position.h / 2);
-			}
-
-			this.position.origin=pt.clone();
+			let point=_pt.clone();
+			point.x=fn(this.limits.origin.x, this.limits.w, this.position.w, point.x);
+			point.y=fn(this.limits.origin.y, this.limits.h, this.position.h, point.y);
+			this.position.origin=point.clone();
 		}
 		else {
 			this.position.origin=_pt.clone();
