@@ -129,7 +129,7 @@ export class game_controller extends controller {
 				this.player.stop();
 			}
 			else {
-				_fn_collision.call(this.player, tiles.shift());
+				_fn_collision.call(this.player, tiles.shift().get_position());
 			}
 		}
 

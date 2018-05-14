@@ -3,6 +3,7 @@
 import {rect} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {map} from './map_loader.js';
+import {room_object} from './room_object.js';
 
 const tile_w=16;
 const tile_h=16;
@@ -19,11 +20,9 @@ export class draw_tile {
 	}
 };
 
-//TODO: Perhaps in another file???
-export class tile {
+export class tile extends room_object {
 	constructor(_x, _y, _t) {
-		let pt=new point_2d(_x*tile_w, _y*tile_h);
-		this.position=new rect(pt, tile_w, tile_h);
+		super(new rect(new point_2d(_x*tile_w, _y*tile_h), tile_w, tile_h));
 		this.type=_t;
 	}
 
@@ -33,20 +32,6 @@ export class tile {
 	}
 };
 
-class room_object {
-
-	constructor(_rect) {
-
-		if(!(_rect instanceof rect)) {
-			throw new Error("room_object must be built from a rect");
-		}
-		this.position=_rect.clone();
-	}
-
-	get_position() {
-		return this.position;
-	}
-};
 
 export class room_entry extends room_object {
 
