@@ -1,6 +1,6 @@
 "use strict"
 
-import {rect, pos_top} from '../core/rect.js';
+import {rect, pos_top, pos_bottom, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {moving_object, gravity_data} from './moving_object.js';
 
@@ -85,31 +85,28 @@ export class player extends moving_object {
 		this.do_movement_y(_delta, this.gravity_data);
 	}
 
-	process_collision_x(_rect) {
-
-		//And adjust our position.
-		super.process_collision_x(_rect);
-
-		//We will stop if we are not in the air...
-		if(!this.get_vector_y()) {
-			this.set_vector_x(0.0);
-		}
-		else {
-			this.set_vector_x(this.get_vector_x()*1.05);
-		}
-	}
-
-	process_collision_y(_rect) {
-
-		super.process_collision_y(_rect);
-	}
-
 	callback_collision(_rect, _pos) {
 
 		super.callback_collision(_rect, _pos);
-		this.set_vector_y(0.0);
-		if(_pos==pos_top) {
-			this.touch_ground();
+
+		switch(_pos) {
+			case pos_left:
+			case pos_right:
+				//We will stop if we are not in the air...
+				if(!this.get_vector_y()) {
+					this.set_vector_x(0.0);
+				}
+				else {
+					this.set_vector_x(this.get_vector_x()/1.05);
+				}
+			break;
+			case pos_top: 
+				this.set_vector_y(0.0);
+				this.touch_ground();
+			break;
+			case pos_bottom:
+				this.set_vector_y(0.0);
+			break;
 		}
 	}
 
