@@ -3,11 +3,10 @@
 import {rect, pos_top, pos_bottom, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {moving_object, gravity_data, axis_x, axis_y} from './moving_object.js';
+import {facing_left, facing_right} from './room_object.js';
 
 const player_walking_speed=80.0;
 const player_jump_factor=-100.0;
-const facing_right=1;
-const facing_left=0;
 
 export class player_input {
 	constructor() {
@@ -21,7 +20,6 @@ export class player extends moving_object {
 	constructor() {
 		super(new rect(new point_2d(0, 0), 8, 16));
 
-		this.last_position=this.position.clone();
 		this.remaining_jumps=2;
 		this.jumping=true;
 		this.facing=facing_right;
@@ -109,10 +107,6 @@ export class player extends moving_object {
 				this.set_vector_y(0.0);
 			break;
 		}
-	}
-
-	save_last_known() {
-		this.last_position=this.position.clone();
 	}
 
 	touch_ground() {

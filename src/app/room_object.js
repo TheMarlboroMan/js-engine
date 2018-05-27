@@ -2,6 +2,9 @@
 
 import {rect} from '../core/rect.js';
 
+export const facing_right=1;
+export const facing_left=0;
+
 export class room_object {
 
 	constructor(_rect) {
@@ -26,6 +29,13 @@ export class room_object {
 
 	adjust_to(_rect, _type) {
 		this.position.adjust_to(_rect, _type);
+	}
+
+	//TODO: Fuck this... 
+	//I'd rather request some "collision_response" object to implement
+	//some sort of double dispatching.
+	get_type() {
+		throw new Error("Called get_type on room_object base");
 	}
 };
 

@@ -4,12 +4,15 @@ import {rect} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {map} from './map_loader.js';
 import {room_object} from './room_object.js';
+import {patrolling_enemy} from './enemy.js';
+import {axis_x} from './moving_object.js';
 
 const tile_w=16;
 const tile_h=16;
 
 const obj_type_entry=1;
 const obj_type_exit=2;
+const obj_type_enemy=4;
 
 //TODO: This should be a bit more complex.
 export class draw_tile {
@@ -26,7 +29,9 @@ export class tile extends room_object {
 		this.type=_t;
 	}
 
-	//TODO: Why not is_solid?. This needs more work.
+	is_solid() {
+		return 1==this.type;
+	}
 
 	is_deadly() {
 		//TODO: No fucking magic.
@@ -37,6 +42,10 @@ export class tile extends room_object {
 	is_platform() {
 		//TODO: No magic please.
 		return 2==this.type;
+	}
+
+	blocks_enemies() {
+		return 3==this.type;
 	}
 };
 
@@ -59,6 +68,11 @@ export class room_exit extends room_object {
 		this.destination=_dest;
 		this.entry_id=_id;
 	}
+
+	//TODO: Bah.
+	get_type() {
+		return "exit";
+	}
 }
 
 export class room {
@@ -75,19 +89,24 @@ export class room {
 
 		this.entries=[];
 		this.exits=[];
+		this.enemies=[];
 	}
 
-	from_map(_map) {
-
+	clear() {
 		this.tiles={};
 		this.background.length=0;
 		this.entries.length=0;
 		this.exits.length=0;
+		this.enemies.length=0;
+	}
+
+	from_map(_map) {
 
 		if(!(_map instanceof map)) {
 			throw new Error("from_map must be called with a valid map");
 		}
 
+		this.clear();
 		this.w=_map.w;
 		this.h=_map.h;
 
@@ -117,6 +136,10 @@ export class room {
 				case obj_type_exit: 
 					this.exits.push(new room_exit(_item.x, _item.y, _item.a.dest, parseInt(_item.a.entry_id, 10)));
 				break;
+				case obj_type_enemy: 
+					//TODO: Calculate REAL position...
+					this.enemies.push(new patrolling_enemy(_item.x*tile_w, _item.y*tile_h));
+				break;
 			}
 		};
 
@@ -141,11 +164,16 @@ export class room {
 	get_map_objects_in_rect(_rect) {
 
 		let result=[];
-		this.exits.forEach((_item) => {
+
+		let f=(_item) => {
 			if(_item.get_position().collides_with(_rect)) {
 				result.push(_item);
 			}
-		});
+		};
+
+		this.exits.forEach(f); 
+		this.enemies.forEach(f);
+
 		return result;
 	}
 
@@ -172,5 +200,23 @@ export class room {
 
 	get_world_size_rect() {
 		return new rect(new point_2d(tile_w,tile_h), (this.w-2)*tile_w, (this.h-2)*tile_h);
+	}
+
+	//!Make all entities loop.
+	loop(_delta, _player_pos) {
+
+		this.enemies.forEach((_item) => {
+			_item.loop(_delta, _player_pos);
+
+			let tiles=this.get_tiles_in_rect(_item.position)
+			.filter((_tile) => {return _tile.is_solid() || _tile.is_enemy_block();});
+
+			//TODO: This shouldn't be like this... I guess, the axis thing...
+			//TODO: This is failing...
+			if(tiles.length) {
+				_item.process_collision(axis_x, tiles.shift().position);
+			}
+
+		});
 	}
 }

@@ -47,6 +47,8 @@ export class game_controller extends controller {
 
 		this.do_player_loop(_delta, axis_x);
 		this.do_player_loop(_delta, axis_y);
+
+		this.room.loop(_delta, this.player.position);
 	}
 
 	do_draw(_display_control, _rm) {
@@ -79,10 +81,13 @@ export class game_controller extends controller {
 		});
 
 		//TODO: Draw monsters, items and so on.
+		this.room.enemies.forEach((_item) => {
+			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.position, new rgba_color(128, 0, 0, 0.9));
+		});
 
 		//TODO: Ask the player for its own way of displaying.
 		//TODO: The player should actually prepare the necessary information to be drawn.
-		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 0.5));
+		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 0.9));
 		//TODO: These are crude calculations...
 		display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), hr(this.player.position.origin.x-10, this.player.position.origin.y-16), gh('stand', 0), this.player.is_facing_right() ? invert_none : invert_x);
 	}
@@ -116,7 +121,7 @@ export class game_controller extends controller {
 		//this logic inside the player, I have to make some stuff known
 		//to it (like the world, get_tiles_in_rect and so on.
 
-		this.player.save_last_known();
+		this.player.save_last_known_position();
 		this.player.loop(_axis, _delta);
 
 	//TODO: Could never decide who's really responsible for this... Does the
@@ -154,13 +159,20 @@ export class game_controller extends controller {
 
 		//Checking collisions with objects.
 		let objects=this.room.get_map_objects_in_rect(this.player.position);
-		if(objects.length) {
-
-			//TODO...
-			this.entry_id=objects[0].entry_id;
-			this.state_controller.request_state_change("map_load");
-			this.messenger.send(new message('load_map', objects[0].destination, ['map_load']));
-			return;
+		for(let i=0; i < objects.length; i++) {
+			//TODO: Absolutely terrible. 
+			switch(objects[i].get_type()) {
+				case 'exit':
+					this.entry_id=objects[i].entry_id;
+					//TODO: I wonder... will this finish executing??
+					this.state_controller.request_state_change("map_load");
+					this.messenger.send(new message('load_map', objects[0].destination, ['map_load']));
+					break;
+				return;
+				case 'enemy':
+					this.kill_player();
+				break;
+			}
 		}
 	}
 

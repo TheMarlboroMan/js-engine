@@ -19,6 +19,7 @@ export class moving_object extends room_object {
 
 	constructor(_rect) {
 		super(_rect);
+		this.last_position=this.position.clone();
 		this.vector=new vector_2d();
 	}
 
@@ -44,6 +45,11 @@ export class moving_object extends room_object {
 	}
 
 	process_collision(_axis, _rect) {
+
+		if(!(_rect instanceof rect)) {
+			throw new Error("process_collision must be called with an instance of rect");
+		}
+
 		if(axis_x===_axis) {
 			if(this.last_position.is_left_of(_rect)) {
 				this.callback_collision(_rect, pos_left);
@@ -105,5 +111,9 @@ export class moving_object extends room_object {
 
 		this.vector.integrate_y(_delta, _gd.weight * _gd.gravity_value);
 		if(this.vector.y > _gd.max_fall_speed) this.vector.y=_gd.max_fall_speed;
+	}
+
+	save_last_known_position() {
+		this.last_position=this.position.clone();
 	}
 }
