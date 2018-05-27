@@ -10,10 +10,7 @@ Attempt to make something similar to dfw, but with JS.
 
 # TODO:
 
-- Do a better js-tile-mapper, with better tileset stuff.
 - Reorganize files: have assets and src/app under "example". Build command will have to be modified, probably.
-- Better resource loading.
-- Sound system: something very basic, like play looped, play single...
 - Draw text.
 
 # Dependencies.

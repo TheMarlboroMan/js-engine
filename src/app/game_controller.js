@@ -11,7 +11,7 @@ import {camera_2d} from '../core/camera_2d.js';
 import {spritesheets} from './spritesheets.js';
 import {room} from './room.js';
 import {player, player_input} from './player.js';
-
+import {axis_x, axis_y} from './moving_object.js';
 
 export class game_controller extends controller {
 
@@ -45,8 +45,8 @@ export class game_controller extends controller {
 
 		//TODO: Fix "I can jump while falling".
 
-		this.do_player_loop(_delta, player.prototype.loop_x, player.prototype.process_collision_x);
-		this.do_player_loop(_delta, player.prototype.loop_y, player.prototype.process_collision_y);
+		this.do_player_loop(_delta, axis_x);
+		this.do_player_loop(_delta, axis_y);
 	}
 
 	do_draw(_display_control, _rm) {
@@ -109,47 +109,64 @@ export class game_controller extends controller {
 	/////
 
 	//!Does the whole player loop.
-	do_player_loop(_delta, _fn_loop, _fn_collision) {
+	do_player_loop(_delta, _axis) {
+
+		//TODO: The fun thing is that this would partly depend on the player
+		//status... If dead, none of this should happen, but if I move
+		//this logic inside the player, I have to make some stuff known
+		//to it (like the world, get_tiles_in_rect and so on.
 
 		this.player.save_last_known();
+		this.player.loop(_axis, _delta);
 
-		_fn_loop.call(this.player, _delta);
+	//TODO: Could never decide who's really responsible for this... Does the
+	//player need to know anything about the world?. Do we need a separate
+	//class for this or can it live in the controller?
 
 		//We get the tiles and filter the real collisions, in case we have irregular-shaped tiles.
+		//Some other filters may be necccesary, like platform tiles that are not solid when the 
+		//player has -y vector...
 		let tiles=this.room.get_tiles_in_rect(this.player.position)
-			.filter((_item) => {return this.player.position.collides_with(_item.position);});
-
-		//Some other filters may be necccesary:
-		//Platform tiles are not solid when the player has -y vector... We can filter them out.
-		if(this.player.get_vector_y() < 0.0) {
-			tiles=tiles.filter((_item) => {
-				return !(_item.is_platform());
+			.filter((_item) => {
+				if(!(this.player.position.collides_with(_item.position))) {
+					return false;
+				}
+				if(this.player.get_vector_y() < 0.0 && _item.is_platform()) {
+					return false;
+				}
+				return true;
 			});
-		}
 
+		//TODO: What about solid objects?. 
+
+		//Checking collisions with tiles.
 		if(tiles.length) {
 			if(tiles.every((_item) => {return _item.is_deadly();})) {
-				//TODO... Do not repeat yourself...
-				let entry_box=this.room.get_entry_by_id(this.entry_id).get_position();
-				this.player.adjust_to(entry_box, pos_inner_bottom);
-				this.player.adjust_to(entry_box, pos_inner_left);
-				this.player.stop();
+				this.kill_player();
 			}
 			else {
-				_fn_collision.call(this.player, tiles.shift().get_position());
+				this.player.process_collision(_axis, tiles.shift().get_position());
 			}
 		}
 
+		//Checking collisions with objects.
 		let objects=this.room.get_map_objects_in_rect(this.player.position);
 		if(objects.length) {
 
-			//Checking collisions with objects.
 			//TODO...
 			this.entry_id=objects[0].entry_id;
 			this.state_controller.request_state_change("map_load");
 			this.messenger.send(new message('load_map', objects[0].destination, ['map_load']));
 			return;
 		}
+	}
 
+	kill_player() {
+
+		//TODO... Do not repeat yourself...
+		let entry_box=this.room.get_entry_by_id(this.entry_id).get_position();
+		this.player.adjust_to(entry_box, pos_inner_bottom);
+		this.player.adjust_to(entry_box, pos_inner_left);
+		this.player.stop();
 	}
 }

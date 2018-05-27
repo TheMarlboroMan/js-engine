@@ -2,7 +2,7 @@
 
 import {rect, pos_top, pos_bottom, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
-import {moving_object, gravity_data} from './moving_object.js';
+import {moving_object, gravity_data, axis_x, axis_y} from './moving_object.js';
 
 const player_walking_speed=80.0;
 const player_jump_factor=-100.0;
@@ -71,18 +71,19 @@ export class player extends moving_object {
 		}
 	}
 
-	loop_x(_delta) {
-
-		//Decrease speed while falling.
-		if(this.get_vector_x() && !this.jumping && this.get_vector_y() > 0.0) {
-			this.set_vector_x(this.get_vector_x()*0.9);
+	loop(_axis, _delta) {
+		if(axis_x===_axis) {
+			//Decrease speed while falling.
+			if(this.get_vector_x() && !this.jumping && this.get_vector_y() > 0.0) {
+				this.set_vector_x(this.get_vector_x()*0.9);
+			}
 		}
+		else if(axis_y===_axis) {
+			//Noop.
+		}
+		else throw new Error("Unknown player axis");
 
-		this.do_movement_x(_delta);
-	}
-
-	loop_y(_delta) {
-		this.do_movement_y(_delta, this.gravity_data);
+		this.do_movement(_axis, _delta, this.gravity_data);
 	}
 
 	callback_collision(_rect, _pos) {

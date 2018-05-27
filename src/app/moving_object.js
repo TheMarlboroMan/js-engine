@@ -4,6 +4,9 @@ import {rect, pos_left, pos_right, pos_top, pos_bottom} from '../core/rect.js';
 import {vector_2d} from '../core/vector_2d.js';
 import {room_object} from './room_object.js';
 
+export const axis_x=0;
+export const axis_y=1;
+
 export class gravity_data {
 	constructor(_gv, _w, _mfs) {
 		this.gravity_value=_gv;
@@ -40,51 +43,53 @@ export class moving_object extends room_object {
 		this.vector.y=_val;
 	}
 
-	process_collision_x(_rect) {
+	process_collision(_axis, _rect) {
+		if(axis_x===_axis) {
+			if(this.last_position.is_left_of(_rect)) {
+				this.callback_collision(_rect, pos_left);
 
-		if(this.last_position.is_left_of(_rect)) {
-			this.callback_collision(_rect, pos_left);
-
+			}
+			else if(this.last_position.is_right_of(_rect)) {
+				this.callback_collision(_rect, pos_right);
+			}
+			else {
+				throw new Error("We got trapped on x...!");
+			}
 		}
-		else if(this.last_position.is_right_of(_rect)) {
-			this.callback_collision(_rect, pos_right);
+		else if(axis_y===_axis) {
+			//Collision from below.
+			if(this.last_position.is_under(_rect)) {
+				this.callback_collision(_rect, pos_bottom);
+			}
+			//Touching the ground.
+			else if(this.last_position.is_over(_rect)) {
+				this.callback_collision(_rect, pos_top);
+			}
+			else {
+				throw new Error("We got trapped on y...!");
+			}
 		}
 		else {
-			throw new Error("We got trapped on x...!");
+			throw new Error("Unknown axis");
 		}
 	}
 
-	process_collision_y(_rect) {
-
-		//Collision from below.
-		if(this.last_position.is_under(_rect)) {
-			this.callback_collision(_rect, pos_bottom);
+	do_movement(_axis, _delta, _gd) {
+		if(axis_x===_axis) {
+			if(this.vector.x) {
+				this.position.origin.x+=this.vector.x*_delta;
+			}
 		}
-		//Touching the ground.
-		else if(this.last_position.is_over(_rect)) {
-			this.callback_collision(_rect, pos_top);
-		}
-		else {
-			throw new Error("We got trapped on y...!");
-		}
-	}
+		else if(axis_y===_axis) {
+			if(undefined!==_gd) {
+				this.do_gravity(_delta, _gd);
+			}
 
-	do_movement_x(_delta) {
-
-		if(this.vector.x) {
-			this.position.origin.x+=this.vector.x*_delta;
+			if(this.vector.y) {
+				this.position.origin.y+=this.vector.y*_delta;
+			}
 		}
-	}
-
-	do_movement_y(_delta, gd) {
-
-		if(undefined!==gd) {
-			this.do_gravity(_delta, this.gravity_data);
-		}
-
-		if(this.vector.y) {
-			this.position.origin.y+=this.vector.y*_delta;
-		}
+		else throw new Error("Unknown axis for do_movement");
 	}
 
 	callback_collision(_rect, _pos) {
