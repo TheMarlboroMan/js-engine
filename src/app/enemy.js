@@ -14,6 +14,24 @@ export class enemy extends moving_object {
 		}
 
 		super(new rect(_pt.clone(), 8, 16));
+
+		this.health=0;
+	}
+
+	get_health() {
+		return health;
+	}
+
+	set_health(_v) {
+		this.health=_v;
+	}
+
+	suffer_damage(_v) {
+		this.health-=-v;
+	}
+
+	is_dead() {
+		return this.health <= 0;
 	}
 
 	loop(_delta, _rect) {
@@ -46,17 +64,25 @@ export class enemy extends moving_object {
 	}
 }
 
+//!An enemy that patrols left and right, until it finds some obstacle and turns
+//!back.
+//TODO: The logic for this patrolling is not in this class, which is actually
+//off-putting. One would have to go into the room.loop method to see what
+//makes these things turn... I must fix that.
 export class patrolling_enemy extends enemy {
 
 	constructor(_x, _y) {
 		super(new point_2d(_x, _y));
 		//TODO: No magic numbers.
 		this.set_vector_x(30.0);
+		this.set_health(10);
 	}
 
 	loop(_delta, _rect) {
 
 		super.move(_delta);
+
+		//TODO: The real logic should go here.
 	}
 
 	callback_collision(_rect, _pos) {

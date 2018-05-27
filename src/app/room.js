@@ -3,77 +3,15 @@
 import {rect} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {map} from './map_loader.js';
-import {room_object} from './room_object.js';
 import {patrolling_enemy} from './enemy.js';
 import {axis_x} from './moving_object.js';
-
-const tile_w=16;
-const tile_h=16;
+import {tile, tile_w, tile_h} from './tile.js';
+import {draw_tile} from './draw_tile.js';
+import {room_entry, room_exit} from './entry_exit.js';
 
 const obj_type_entry=1;
 const obj_type_exit=2;
 const obj_type_enemy=4;
-
-//TODO: This should be a bit more complex.
-export class draw_tile {
-	constructor(_x, _y, _t) {
-		this.x=_x;
-		this.y=_y;
-		this.type=_t;
-	}
-};
-
-export class tile extends room_object {
-	constructor(_x, _y, _t) {
-		super(new rect(new point_2d(_x*tile_w, _y*tile_h), tile_w, tile_h));
-		this.type=_t;
-	}
-
-	is_solid() {
-		return 1==this.type;
-	}
-
-	is_deadly() {
-		//TODO: No fucking magic.
-		return 5==this.type;
-	}
-
-	//!Platform means "can be jumped on from below".
-	is_platform() {
-		//TODO: No magic please.
-		return 2==this.type;
-	}
-
-	blocks_enemies() {
-		return 3==this.type;
-	}
-};
-
-
-export class room_entry extends room_object {
-
-	constructor(_x, _y, _id, _f) {
-		super(new rect(new point_2d(_x*tile_w, _y*tile_h), tile_w, tile_h));
-
-		this.id=_id;
-		this.facing=_f;
-	}
-}
-
-export class room_exit extends room_object {
-
-	constructor(_x, _y, _dest, _id) {
-		super(new rect(new point_2d(_x*tile_w, _y*tile_h), tile_w, tile_h));
-
-		this.destination=_dest;
-		this.entry_id=_id;
-	}
-
-	//TODO: Bah.
-	get_type() {
-		return "exit";
-	}
-}
 
 export class room {
 
@@ -93,6 +31,7 @@ export class room {
 	}
 
 	clear() {
+
 		this.tiles={};
 		this.background.length=0;
 		this.entries.length=0;
@@ -107,6 +46,7 @@ export class room {
 		}
 
 		this.clear();
+
 		this.w=_map.w;
 		this.h=_map.h;
 
@@ -128,7 +68,7 @@ export class room {
 
 		let fn_obj=(_item) => {
 
-			//TODO: Create a factory.
+			//TODO: Create a factory, remove direct dependencies.
 			switch(_item.t) {
 				case obj_type_entry:
 					this.entries.push(new room_entry(_item.x, _item.y, parseInt(_item.a.id, 10), parseInt(_item.a.facing, 10)));
@@ -147,11 +87,13 @@ export class room {
 		process(_map.background, fn_back);
 	}
 
+	//Returns the index of a tile in the hashed map.
 	get_index(_x, _y) {
 		//TODO: Check boundaries.
 		return _x + (_y * this.w);
 	}
 
+	//!Gets the room entry (as in entry point).
 	get_entry_by_id(_id) {
 		let res=this.entries.find((_item) => {return _item.id===_id;});
 		if(undefined===res) {
@@ -160,6 +102,7 @@ export class room {
 		return res;
 	}
 
+	//!Returns all interactuable map objects in the rect.
 	get_map_objects_in_rect(_rect) {
 
 		let result=[];
@@ -176,6 +119,7 @@ export class room {
 		return result;
 	}
 
+	//!Returns all tiles bounded to the rectangle.
 	get_tiles_in_rect(_rect) {
 
 		let result=[];
@@ -196,11 +140,13 @@ export class room {
 		return result;
 	}
 
+	//!Returns the room size.Notice that a padding of tile_w and tile_h
+	//!is always reserved to fully enclose each room without bothering the camera.
 	get_world_size_rect() {
 		return new rect(new point_2d(tile_w,tile_h), (this.w-2)*tile_w, (this.h-2)*tile_h);
 	}
 
-	//!Make all entities loop.
+	//!Makes all entities loop.
 	loop(_delta, _player_pos) {
 
 		this.enemies.forEach((_item) => {

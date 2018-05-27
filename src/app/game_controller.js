@@ -27,8 +27,6 @@ export class game_controller extends controller {
 
 	do_step(_delta, _input, _audio) {
 
-		//TODO: WHAT ABOUT THE AUDIO??? I WANT TO TEST THAT!!!
-
 		let pi=new player_input();
 
 		if(_input.is_keydown('space')) 		{pi.y=-1;}
@@ -49,6 +47,10 @@ export class game_controller extends controller {
 		this.do_player_loop(_delta, axis_y);
 
 		this.room.loop(_delta, this.player.position);
+
+		//TODO: What about the player attacking?
+		//I think we should implement it with some sort of 
+		//sword object the enemies run into :D.
 	}
 
 	do_draw(_display_control, _rm) {
@@ -173,6 +175,7 @@ export class game_controller extends controller {
 					//TODO: I wonder... will this finish executing??
 					this.state_controller.request_state_change("map_load");
 					this.messenger.send(new message('load_map', objects[0].destination, ['map_load']));
+					//TODO: This is meant to break from the loop ¬¬...
 					break;
 				return;
 				case 'enemy':
