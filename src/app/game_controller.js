@@ -131,6 +131,7 @@ export class game_controller extends controller {
 		//We get the tiles and filter the real collisions, in case we have irregular-shaped tiles.
 		//Some other filters may be necccesary, like platform tiles that are not solid when the 
 		//player has -y vector...
+		//TODO: Refactor.
 		let tiles=this.room.get_tiles_in_rect(this.player.position)
 			.filter((_item) => {
 				if(!(this.player.position.collides_with(_item.position))) {
@@ -140,6 +141,9 @@ export class game_controller extends controller {
 					if(this.player.get_vector_y() >= 0.0 && this.player.last_position.is_over(_item.position)) {
 						return true;
 					}
+					return false;
+				}
+				if(_item.blocks_enemies()) {
 					return false;
 				}
 				return true;

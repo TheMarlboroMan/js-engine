@@ -1,6 +1,6 @@
 "use strict"
 
-import {rect} from '../core/rect.js';
+import {rect, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {moving_object, axis_x, axis_y} from './moving_object.js';
 
@@ -13,7 +13,8 @@ export class enemy extends moving_object {
 			throw new Error("enemy must be built from point_2d");
 		}
 
-		super(new rect(_pt.clone(), 8, 16));
+		//TODO: Was 16...
+		super(new rect(_pt.clone(), 8, 10));
 	}
 
 	loop(_delta, _rect) {
@@ -51,7 +52,7 @@ export class patrolling_enemy extends enemy {
 	constructor(_x, _y) {
 		super(new point_2d(_x, _y));
 		//TODO: No magic numbers.
-		this.set_vector_x(80.0);
+		this.set_vector_x(30.0);
 	}
 
 	loop(_delta, _rect) {
