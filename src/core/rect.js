@@ -23,6 +23,14 @@ export class rect {
 		this.h=_h;
 	}
 
+	get_end_x() {
+		return this.origin.x+this.w;
+	}
+
+	get_end_y() {
+		return this.origin.y+this.h;
+	}
+
 	collides_with(_other) {
 		return rect.rects_collide(this, _other);
 	}

@@ -14,6 +14,11 @@ let hero={
 	'guard' : [pt(0, 96)]
 };
 
+//TODO
+let monster={
+
+};
+
 export class spritesheets {
 
 	//TODO: Check data.

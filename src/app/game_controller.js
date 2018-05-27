@@ -90,10 +90,7 @@ export class game_controller extends controller {
 			case 'map_loaded':
 				this.room.from_map(_message.body); 
 				this.camera.set_limits(this.room.get_world_size_rect()); 
-				//TODO: Do not repeat yourself.
-				let entry_box=this.room.get_entry_by_id(this.entry_id).get_position();
-				this.player.adjust_to(entry_box, pos_inner_bottom);
-				this.player.adjust_to(entry_box, pos_inner_left);
+				this.place_player_at_entry(this.entry_id);
 			break;
 		}
 	}
@@ -131,7 +128,10 @@ export class game_controller extends controller {
 				if(!(this.player.position.collides_with(_item.position))) {
 					return false;
 				}
-				if(this.player.get_vector_y() < 0.0 && _item.is_platform()) {
+				if(_item.is_platform()) {
+					if(this.player.get_vector_y() >= 0.0 && this.player.last_position.is_over(_item.position)) {
+						return true;
+					}
 					return false;
 				}
 				return true;
@@ -163,10 +163,14 @@ export class game_controller extends controller {
 
 	kill_player() {
 
-		//TODO... Do not repeat yourself...
-		let entry_box=this.room.get_entry_by_id(this.entry_id).get_position();
+		this.place_player_at_entry(this.entry_id);
+		this.player.stop();
+	}
+
+	place_player_at_entry(_entry_id) {
+
+		let entry_box=this.room.get_entry_by_id(_entry_id).get_position();
 		this.player.adjust_to(entry_box, pos_inner_bottom);
 		this.player.adjust_to(entry_box, pos_inner_left);
-		this.player.stop();
 	}
 }
