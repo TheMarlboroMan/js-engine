@@ -42,7 +42,9 @@ export class game_controller extends controller {
 		//Do gravity and jump checks.
 
 		//TODO: Fix "I can jump while falling".
-
+		//TODO: Solve the collision thing with sense: keep an array of collisios, solve after each step, this
+		//way each entity knows what to do.
+		
 		this.do_player_loop(_delta, axis_x);
 		this.do_player_loop(_delta, axis_y);
 
