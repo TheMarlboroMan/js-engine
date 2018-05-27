@@ -80,8 +80,10 @@ export class game_controller extends controller {
 			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(_item.type));
 		});
 
-		//TODO: Draw monsters, items and so on.
+		//TODO: Draw items and so on.
+
 		this.room.enemies.forEach((_item) => {
+			//TODO: Draw the enemy, not some block.
 			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.position, new rgba_color(128, 0, 0, 0.9));
 		});
 

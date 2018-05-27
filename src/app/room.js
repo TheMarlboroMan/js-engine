@@ -136,8 +136,7 @@ export class room {
 				case obj_type_exit: 
 					this.exits.push(new room_exit(_item.x, _item.y, _item.a.dest, parseInt(_item.a.entry_id, 10)));
 				break;
-				case obj_type_enemy: 
-					//TODO: Calculate REAL position...
+				case obj_type_enemy: //By dumb luck we don't need to adjust positions... the enemy is as high as its tile, so there's no need to push it to the floor.
 					this.enemies.push(new patrolling_enemy(_item.x*tile_w, _item.y*tile_h));
 				break;
 			}
@@ -193,7 +192,6 @@ export class room {
 				}
 			}
 		}
-//document.getElementById('debug').innerHTML=_rect.origin.x+' / '+tile_w+' = '+(_rect.origin.x / tile_w)+'<br/>'+begin_x+' -> '+end_x+' '+begin_y+' -> '+end_y;
 
 		return result;
 	}
@@ -214,8 +212,7 @@ export class room {
 					&& _item.position.collides_with(_tile.position);
 				});
 
-			//TODO: The axis thing reeks.
-			//TODO: This is failing... Maybe the position is not well adjusted???
+			//TODO: The axis thing reeks. What if we need something that bounces up and down?
 			if(tiles.length) {
 				_item.process_collision(axis_x, tiles.shift().position);
 			}

@@ -13,7 +13,6 @@ export class enemy extends moving_object {
 			throw new Error("enemy must be built from point_2d");
 		}
 
-		//TODO: Was 16...
 		super(new rect(_pt.clone(), 8, 16));
 	}
 
