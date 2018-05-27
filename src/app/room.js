@@ -209,7 +209,10 @@ export class room {
 			_item.loop(_delta, _player_pos);
 
 			let tiles=this.get_tiles_in_rect(_item.position)
-				.filter((_tile) => {return _tile.is_solid() || _tile.blocks_enemies();});
+				.filter((_tile) => {
+					return (_tile.is_solid() || _tile.blocks_enemies())
+					&& _item.position.collides_with(_tile.position);
+				});
 
 			//TODO: The axis thing reeks.
 			//TODO: This is failing... Maybe the position is not well adjusted???

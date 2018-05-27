@@ -14,7 +14,7 @@ export class enemy extends moving_object {
 		}
 
 		//TODO: Was 16...
-		super(new rect(_pt.clone(), 8, 10));
+		super(new rect(_pt.clone(), 8, 16));
 	}
 
 	loop(_delta, _rect) {
