@@ -54,7 +54,7 @@ export class game_controller extends controller {
 
 		this.camera.center_on(this.player.position.origin);
 
-		//TODO: This is awful.
+		//TODO: This is awful.. Like REALLY AWFUL.
 		//TODO: Let us not repeat ourselves.
 		//TODO. No magic numbers...
 		let r=function(_x, _y) {return new rect(new point_2d(_x, _y), 16, 16);};
@@ -74,10 +74,13 @@ export class game_controller extends controller {
 		this.room.background.forEach((_item) => {
 			//TODO: Move to another class.
 			//TODO. No magic. 
-			//TODO: The tile should actually know how to draw itself?
+			//TODO: Ask the tile to perform the manipulations and such.
 			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(_item.type));
 		});
 
+		//TODO: Draw monsters, items and so on.
+
+		//TODO: Ask the player for its own way of displaying.
 		//TODO: The player should actually prepare the necessary information to be drawn.
 		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 0.5));
 		//TODO: These are crude calculations...
@@ -163,6 +166,9 @@ export class game_controller extends controller {
 
 	kill_player() {
 
+		//TODO: Changing the player status would be ideal, to some animation...
+		//After the animation is done, we should be able to call some 
+		//player_reset method.
 		this.place_player_at_entry(this.entry_id);
 		this.player.stop();
 	}
