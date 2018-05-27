@@ -26,9 +26,17 @@ export class tile extends room_object {
 		this.type=_t;
 	}
 
+	//TODO: Why not is_solid?. This needs more work.
+
 	is_deadly() {
 		//TODO: No fucking magic.
-		return this.type==5;
+		return 5==this.type;
+	}
+
+	//!Platform means "can be jumped on from below".
+	is_platform() {
+		//TODO: No magic please.
+		return 2==this.type;
 	}
 };
 

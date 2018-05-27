@@ -119,9 +119,16 @@ export class game_controller extends controller {
 		let tiles=this.room.get_tiles_in_rect(this.player.position)
 			.filter((_item) => {return this.player.position.collides_with(_item.position);});
 
+		//Some other filters may be necccesary:
+		//Platform tiles are not solid when the player has -y vector... We can filter them out.
+		if(this.player.get_vector_y() < 0.0) {
+			tiles=tiles.filter((_item) => {
+				return !(_item.is_platform());
+			});
+		}
+
 		if(tiles.length) {
 			if(tiles.every((_item) => {return _item.is_deadly();})) {
-				console.log("PLAYER CROAKED!!");
 				//TODO... Do not repeat yourself...
 				let entry_box=this.room.get_entry_by_id(this.entry_id).get_position();
 				this.player.adjust_to(entry_box, pos_inner_bottom);
@@ -136,6 +143,7 @@ export class game_controller extends controller {
 		let objects=this.room.get_map_objects_in_rect(this.player.position);
 		if(objects.length) {
 
+			//Checking collisions with objects.
 			//TODO...
 			this.entry_id=objects[0].entry_id;
 			this.state_controller.request_state_change("map_load");
