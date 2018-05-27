@@ -6,8 +6,8 @@ export class resource_index extends ri {
 
 	constructor() {
 		super();
-		this.add_image('sprites', 'assets/MiniKnightSet.png');
-		this.add_image('tiles', 'assets/background.png');
+		this.add_image('sprites', 'assets/graphics/MiniKnightSet.png');
+		this.add_image('tiles', 'assets/graphics/background.png');
 		this.add_audio('main_music', 'assets/audio/snowfall.ogg');
 		this.add_audio('fx1', 'assets/audio/1.wav');
 		this.add_audio('fx2', 'assets/audio/2.wav');
