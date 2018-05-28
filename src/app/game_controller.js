@@ -42,16 +42,17 @@ export class game_controller extends controller {
 		//Do gravity and jump checks.
 
 		//TODO: Fix "I can jump while falling".
-		//TODO: Solve the collision thing with sense: keep an array of collisios, solve after each step, this
+
+		//TODO: Solve the collision thing with sense: keep an array of collisions, solve after each step, this
 		//way each entity knows what to do.
-		
+
 		this.do_player_loop(_delta, axis_x);
 		this.do_player_loop(_delta, axis_y);
 
 		this.room.loop(_delta, this.player.position);
 
 		//TODO: What about the player attacking?
-		//I think we should implement it with some sort of 
+		//I think we should implement it with some sort of
 		//sword object the enemies run into :D.
 	}
 
@@ -79,7 +80,7 @@ export class game_controller extends controller {
 		//Draw the place..
 		this.room.background.forEach((_item) => {
 			//TODO: Move to another class.
-			//TODO. No magic. 
+			//TODO. No magic.
 			//TODO: Ask the tile to perform the manipulations and such.
 			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(_item.type));
 		});
@@ -93,17 +94,18 @@ export class game_controller extends controller {
 
 		//TODO: Ask the player for its own way of displaying.
 		//TODO: The player should actually prepare the necessary information to be drawn.
+
 		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 0.9));
 		//TODO: These are crude calculations...
-		display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), hr(this.player.position.origin.x-10, this.player.position.origin.y-16), gh('stand', 0), this.player.is_facing_right() ? invert_none : invert_x);
+		//display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), hr(this.player.position.origin.x-10, this.player.position.origin.y-16), gh('stand', 0), this.player.is_facing_right() ? invert_none : invert_x);
 	}
 
 	do_receive_message(_message) {
 
 		switch(_message.type) {
 			case 'map_loaded':
-				this.room.from_map(_message.body); 
-				this.camera.set_limits(this.room.get_world_size_rect()); 
+				this.room.from_map(_message.body);
+				this.camera.set_limits(this.room.get_world_size_rect());
 				this.place_player_at_entry(this.entry_id);
 			break;
 		}
@@ -135,7 +137,7 @@ export class game_controller extends controller {
 	//class for this or can it live in the controller?
 
 		//We get the tiles and filter the real collisions, in case we have irregular-shaped tiles.
-		//Some other filters may be necccesary, like platform tiles that are not solid when the 
+		//Some other filters may be necccesary, like platform tiles that are not solid when the
 		//player has -y vector...
 		//TODO: Refactor.
 		let tiles=this.room.get_tiles_in_rect(this.player.position)
@@ -155,7 +157,7 @@ export class game_controller extends controller {
 				return true;
 			});
 
-		//TODO: What about solid objects?. 
+		//TODO: What about solid objects?.
 
 		//Checking collisions with tiles.
 		if(tiles.length) {
@@ -170,7 +172,7 @@ export class game_controller extends controller {
 		//Checking collisions with objects.
 		let objects=this.room.get_map_objects_in_rect(this.player.position);
 		for(let i=0; i < objects.length; i++) {
-			//TODO: Absolutely terrible. 
+			//TODO: Absolutely terrible.
 			switch(objects[i].get_type()) {
 				case 'exit':
 					this.entry_id=objects[i].entry_id;
@@ -190,7 +192,7 @@ export class game_controller extends controller {
 	kill_player() {
 
 		//TODO: Changing the player status would be ideal, to some animation...
-		//After the animation is done, we should be able to call some 
+		//After the animation is done, we should be able to call some
 		//player_reset method.
 		this.place_player_at_entry(this.entry_id);
 		this.player.stop();
