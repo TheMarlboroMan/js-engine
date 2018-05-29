@@ -34,7 +34,7 @@ export class deleter {
 			}
 
 			_rdc.player_attacks.splice(index, 1);
-		}
+		});
 
 		this.collected.length=0;
 	}

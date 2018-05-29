@@ -2,7 +2,7 @@
 
 import {rect, pos_right, pos_left} from '../core/rect.js';
 import {room_object} from './room_object.js'; 
-import {deleter} from './deleter.js'; //TODO: Should be in room object.
+import {deleter} from './deleter.js'; //TODO: Should be in room 
 
 
 
@@ -23,7 +23,8 @@ export class player_attack extends room_object {
 	}
 
 	attach_to(_rect, _pos) {
-		if(!(_rect instanceof rect) {
+
+		if(!(_rect instanceof rect)) {
 			throw new Error("attach_to must be invoked with a rect");
 		}
 
