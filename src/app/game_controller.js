@@ -10,7 +10,9 @@ import {camera_2d} from '../core/camera_2d.js';
 
 import {spritesheets} from './spritesheets.js';
 import {room} from './room.js';
+import {deleter} from './deleter.js';
 import {player, player_input} from './player.js';
+import {player_attack} from './player_attack.js';
 import {axis_x, axis_y} from './moving_object.js';
 
 export class game_controller extends controller {
@@ -21,7 +23,7 @@ export class game_controller extends controller {
 		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 208));
 		this.room=new room();
 		this.player=new player();
-
+		this.deleter=new deleter(this.room.rdc);
 		this.entry_id=1;
 	}
 
@@ -51,6 +53,10 @@ export class game_controller extends controller {
 
 		this.room.loop(_delta, this.player.position);
 
+		if(this.deleter.can_perform_deletion()) {
+			this.deleter.perform_deletion();
+		}
+
 		//TODO: What about the player attacking?
 		//I think we should implement it with some sort of
 		//sword object the enemies run into :D.
@@ -78,7 +84,7 @@ export class game_controller extends controller {
 		};
 
 		//Draw the place..
-		this.room.background.forEach((_item) => {
+		this.room.get_background().forEach((_item) => {
 			//TODO: Move to another class.
 			//TODO. No magic.
 			//TODO: Ask the tile to perform the manipulations and such.
@@ -87,7 +93,7 @@ export class game_controller extends controller {
 
 		//TODO: Draw items and so on.
 
-		this.room.enemies.forEach((_item) => {
+		this.room.get_enemies().forEach((_item) => {
 			//TODO: Draw the enemy, not some block.
 			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.position, new rgba_color(128, 0, 0, 0.9));
 		});

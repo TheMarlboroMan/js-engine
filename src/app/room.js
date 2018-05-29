@@ -8,6 +8,7 @@ import {axis_x} from './moving_object.js';
 import {tile, tile_w, tile_h} from './tile.js';
 import {draw_tile} from './draw_tile.js';
 import {room_entry, room_exit} from './entry_exit.js';
+import {room_data_container} from './room_data_container.js';
 
 const obj_type_entry=1;
 const obj_type_exit=2;
@@ -20,23 +21,15 @@ export class room {
 		this.w=0;
 		this.h=0;
 
-		//Tiles is a hashed map, where the key is the index as returned
-		//by get_index.
-		this.tiles={};
-		this.background=[];
-
-		this.entries=[];
-		this.exits=[];
-		this.enemies=[];
+		this.rdc=new room_data_container;
 	}
 
-	clear() {
+	get_background() {
+		return this.rdc.background;
+	}
 
-		this.tiles={};
-		this.background.length=0;
-		this.entries.length=0;
-		this.exits.length=0;
-		this.enemies.length=0;
+	get_enemis() {
+		return this.rdc.enemies;
 	}
 
 	from_map(_map) {
@@ -45,7 +38,7 @@ export class room {
 			throw new Error("from_map must be called with a valid map");
 		}
 
-		this.clear();
+		this.rdc.clear();
 
 		this.w=_map.w;
 		this.h=_map.h;
@@ -59,11 +52,11 @@ export class room {
 		};
 
 		let fn_tiles=(_item) => {
-			this.tiles[""+this.get_index(_item.x, _item.y)]=new tile(_item.x, _item.y, _item.t);
+			this.rdc.tiles[""+this.get_index(_item.x, _item.y)]=new tile(_item.x, _item.y, _item.t);
 		};
 
 		let fn_back=(_item) => {
-			this.background.push(new draw_tile(_item.x, _item.y, _item.t));
+			this.rdc.background.push(new draw_tile(_item.x, _item.y, _item.t));
 		};
 
 		let fn_obj=(_item) => {
@@ -71,13 +64,13 @@ export class room {
 			//TODO: Create a factory, remove direct dependencies.
 			switch(_item.t) {
 				case obj_type_entry:
-					this.entries.push(new room_entry(_item.x, _item.y, parseInt(_item.a.id, 10), parseInt(_item.a.facing, 10)));
+					this.rdc.entries.push(new room_entry(_item.x, _item.y, parseInt(_item.a.id, 10), parseInt(_item.a.facing, 10)));
 				break;
 				case obj_type_exit: 
-					this.exits.push(new room_exit(_item.x, _item.y, _item.a.dest, parseInt(_item.a.entry_id, 10)));
+					this.rdc.exits.push(new room_exit(_item.x, _item.y, _item.a.dest, parseInt(_item.a.entry_id, 10)));
 				break;
 				case obj_type_enemy: //By dumb luck we don't need to adjust positions... the enemy is as high as its tile, so there's no need to push it to the floor.
-					this.enemies.push(new patrolling_enemy(_item.x*tile_w, _item.y*tile_h));
+					this.rdc.enemies.push(new patrolling_enemy(_item.x*tile_w, _item.y*tile_h));
 				break;
 			}
 		};
@@ -95,7 +88,7 @@ export class room {
 
 	//!Gets the room entry (as in entry point).
 	get_entry_by_id(_id) {
-		let res=this.entries.find((_item) => {return _item.id===_id;});
+		let res=this.rdc.entries.find((_item) => {return _item.id===_id;});
 		if(undefined===res) {
 			throw new Error("Cannot find entry with id "+_id);
 		}
@@ -113,8 +106,8 @@ export class room {
 			}
 		};
 
-		this.exits.forEach(f); 
-		this.enemies.forEach(f);
+		this.rdc.exits.forEach(f); 
+		this.rdc.enemies.forEach(f);
 
 		return result;
 	}
@@ -131,8 +124,8 @@ export class room {
 
 		for(let x=begin_x; x <= end_x; x++) {
 			for(let y=begin_y; y <= end_y; y++) {
-				if(undefined!==this.tiles[this.get_index(x, y)]) {
-					result.push(this.tiles[this.get_index(x, y)]);
+				if(undefined!==this.rdc.tiles[this.get_index(x, y)]) {
+					result.push(this.rdc.tiles[this.get_index(x, y)]);
 				}
 			}
 		}
@@ -149,7 +142,7 @@ export class room {
 	//!Makes all entities loop.
 	loop(_delta, _player_pos) {
 
-		this.enemies.forEach((_item) => {
+		this.rdc.enemies.forEach((_item) => {
 			_item.loop(_delta, _player_pos);
 
 			let tiles=this.get_tiles_in_rect(_item.position)
