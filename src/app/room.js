@@ -28,7 +28,7 @@ export class room {
 		return this.rdc.background;
 	}
 
-	get_enemis() {
+	get_enemies() {
 		return this.rdc.enemies;
 	}
 
