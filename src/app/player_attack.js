@@ -2,7 +2,7 @@
 
 import {rect, pos_right, pos_left} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
-import {player_attacks, room_object} from './room_object.js'; 
+import {player_attacks_collect, room_object} from './room_object.js'; 
 
 const w=8;
 const h=3;
@@ -19,8 +19,12 @@ export class player_attack extends room_object {
 		this.remaining_time=0.5;
 	}
 
+	get_damage() {
+		return 10; //TODO: No magic.
+	}
+
 	get_collection_id() {
-		return player_attacks;
+		return player_attacks_collect;
 	}
 
 	attach_to(_rect, _pos) {

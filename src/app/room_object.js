@@ -6,7 +6,8 @@ import {deleter} from './deleter.js';
 export const facing_right=1;
 export const facing_left=0;
 
-export const player_attacks=0;
+export const player_attacks_collect=0;
+export const enemies_collect=1;
 
 //TODO: Each room object should implement the collect_me thing.
 export class room_object {

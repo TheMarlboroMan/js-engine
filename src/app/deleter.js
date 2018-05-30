@@ -1,7 +1,7 @@
 "use strict"
 
 import {room_data_container} from './room_data_container.js';
-import {player_attacks} from './room_object.js';
+import {player_attacks_collect, enemies_collect} from './room_object.js';
 
 export class deleter {
 
@@ -29,13 +29,14 @@ export class deleter {
 		this.collected.forEach((_item) => {
 
 			let collection=null;
+
 			switch(_item.get_collection_id()) {
-				case player_attacks:
-					collection=_rdc.player_attacks; 
-				break;
+				case player_attacks_collect: 	collection=_rdc.player_attacks;  break;
+				case enemies_collect: 		collection=_rdc.enemies;  break;
 			}
 
 			if(null!==collection) {
+
 				let index=collection.indexOf(_item);
 				if(-1===index) {
 					throw new Error("Could not find deletable in array");

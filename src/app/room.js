@@ -148,6 +148,12 @@ export class room {
 				_item.process_collision(axis_x, tiles.shift().position);
 			}
 
+			this.rdc.player_attacks.forEach((_attack) => {
+				if(_attack.get_position().collides_with(_item.get_position())) {
+					_item.suffer_damage(_attack.get_damage());
+				}
+			});
+
 		});
 
 		this.rdc.player_attacks.forEach((_item) => {

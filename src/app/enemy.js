@@ -3,6 +3,7 @@
 import {rect, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {moving_object, axis_x, axis_y} from './moving_object.js';
+import {enemies_collect} from './room_object.js';
 
 //!All enemies are considered moving... Even if they behave like stationary things.
 export class enemy extends moving_object {
@@ -18,6 +19,10 @@ export class enemy extends moving_object {
 		this.health=0;
 	}
 
+	get_collection_id() {
+		return enemies_collect;
+	}
+
 	get_health() {
 		return health;
 	}
@@ -27,13 +32,23 @@ export class enemy extends moving_object {
 	}
 
 	suffer_damage(_v) {
-		this.health-=_v;
 
-		if(this.health <= 0) {
-			this.mark_for_deletion();
+		if(this.can_take_damage()) {
+			this.health-=_v;
+			if(this.health <= 0) {
+				this.mark_for_deletion();
+			}
+			else {
+				//TODO: Enter invulnerability status.
+			}
 		}
 	}
 
+	//TODO: I think everyone can implement this returning its
+	//inv counter.
+	can_take_damage() {
+		throw new Error("Called can_take_damage on base enemy class");
+	}
 
 	loop(_delta, _rect) {
 		throw new Error("Called loop on base enemy class");
@@ -84,6 +99,10 @@ export class patrolling_enemy extends enemy {
 		super.move(_delta);
 
 		//TODO: The real logic should go here.
+	}
+
+	can_take_damage() {
+		return true; //TODO: Enter some invulnerability status..
 	}
 
 	callback_collision(_rect, _pos) {
