@@ -39,7 +39,9 @@ export class room_object_factory {
 	}
 
 	make_and_store_player_attack(_rect, _face_right, _rdc) {
-		_rdc.player_attacks.push(this.make_player_attack(_rect, _face_right));
+		let pa=this.make_player_attack(_rect, _face_right);
+		_rdc.player_attacks.push(pa);
+		return pa;
 	}
 
 	make_player_attack(_rect, _face_right) {
@@ -58,7 +60,7 @@ export class room_object_factory {
 	make_room_exit(_item) {
 		let x=parseInt(_item.x, 10)*tile_w;
 		let y=parseInt(_item.y, 10)*tile_h;
-		return new room_entry(x, y, tile_w, tile_h, _item.a.dest, parseInt(_item.a.id, 10), this.gc);
+		return new room_exit(x, y, tile_w, tile_h, _item.a.dest, parseInt(_item.a.entry_id, 10), this.gc);
 	}
 
 	 //By dumb luck we don't need to adjust positions... the enemy is as high as its tile, so there's no need to push it to the floor.

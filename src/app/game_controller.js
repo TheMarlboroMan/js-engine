@@ -52,8 +52,9 @@ export class game_controller extends controller {
 		//TODO: Solve the collision thing with sense: keep an array of collisions, solve after each step, this
 		//way each entity knows what to do.
 
-		this.do_player_loop(_delta, axis_x);
-		this.do_player_loop(_delta, axis_y);
+		this.player.loop(_delta);
+		this.do_player_movement(_delta, axis_x);
+		this.do_player_movement(_delta, axis_y);
 
 		this.room.loop(_delta, this.player.position);
 
@@ -127,7 +128,7 @@ export class game_controller extends controller {
 	/////
 
 	//!Does the whole player loop.
-	do_player_loop(_delta, _axis) {
+	do_player_movement(_delta, _axis) {
 
 		//TODO: The fun thing is that this would partly depend on the player
 		//status... If dead, none of this should happen, but if I move
@@ -135,7 +136,7 @@ export class game_controller extends controller {
 		//to it (like the world, get_tiles_in_rect and so on.
 
 		this.player.save_last_known_position();
-		this.player.loop(_axis, _delta);
+		this.player.do_movement(_axis, _delta);
 
 	//TODO: Could never decide who's really responsible for this... Does the
 	//player need to know anything about the world?. Do we need a separate
@@ -191,6 +192,8 @@ export class game_controller extends controller {
 				case 'enemy':
 					this.kill_player();
 				break;
+				case 'entry': //TODO: Why?
+				break;
 			}
 		}
 	}
@@ -202,6 +205,7 @@ export class game_controller extends controller {
 		//player_reset method.
 		this.place_player_at_entry(this.entry_id);
 		this.player.stop();
+		//TODO: Reset player status too, in case it was attacking
 		//TODO: Clear player attacks. Reset the room, maybe.
 	}
 
@@ -214,9 +218,13 @@ export class game_controller extends controller {
 
 	try_player_attack() {
 
-		//TODO: If can attack... check player status.
-		let fact=new room_object_factory(this.deleter);
-		fact.make_and_store_player_attack(this.player.get_position(), this.player.is_facing_right(), this.room.rdc);
-		//TODO: Change player state: will not move until the attack is done, plus some.
+		if(this.player.can_attack()) {
+			let fact=new room_object_factory(this.deleter);
+			//TODO: We should somehow link the attack to the player, so it moves in flight... Maybe we can reference the rect...
+			let attack=fact.make_and_store_player_attack(this.player.get_position(), this.player.is_facing_right(), this.room.rdc);
+			//TODO: No magic!
+			this.player.set_attacking(attack.remaining_time+0.1);
+
+		}
 	}
 }

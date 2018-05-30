@@ -15,15 +15,23 @@ export class player_input {
 	}
 }
 
+//TODO: Not liking this Movement and combat states should be separate.
+const player_state_regular=0;
+const player_state_attack=1;
+
 export class player extends moving_object {
 
 	constructor(_gc) {
 		super(new rect(new point_2d(0, 0), 8, 16), _gc);
 
+		this.state=player_state_regular;
+		//TODO: No magic...
 		this.remaining_jumps=2;
 		this.jumping=true;
 		this.facing=facing_right;
+		//TODO: No magic.
 		this.gravity_data=new gravity_data(3.0, 80.0, 200.0);
+		this.attack_cooloff=0.0;
 	}
 
 	is_facing_right() {
@@ -69,11 +77,28 @@ export class player extends moving_object {
 		}
 	}
 
-	loop(_axis, _delta) {
+	//TODO: What a lie... loop should be called only once!.
+	loop(_delta) {
+		if(this.attack_cooloff) {
+			this.attack_cooloff-=_delta;
+			if(this.attack_cooloff<=0.0) {
+				this.attack_cooloff=0.0;
+				//TODO: Not so sure about that... perhaps attacking=false?
+				this.state=player_state_regular;
+			}
+		}
+	}
+
+	do_movement(_axis, _delta) {
+
 		if(axis_x===_axis) {
 			//Decrease speed while falling.
 			if(this.get_vector_x() && !this.jumping && this.get_vector_y() > 0.0) {
 				this.set_vector_x(this.get_vector_x()*0.9);
+			}
+			//TODO: I don't like the state thing.
+			else if(this.state==player_state_attack && 0.0==this.get_vector_y()) {
+				return; //No movement on the X axis when attacking on the floor.
 			}
 		}
 		else if(axis_y===_axis) {
@@ -81,7 +106,7 @@ export class player extends moving_object {
 		}
 		else throw new Error("Unknown player axis");
 
-		this.do_movement(_axis, _delta, this.gravity_data);
+		super.do_movement(_axis, _delta, this.gravity_data);
 	}
 
 	callback_collision(_rect, _pos) {
@@ -113,5 +138,17 @@ export class player extends moving_object {
 		//TODO: Perhaps... on_ground=true?.
 		this.jumping=false;
 		this.remaining_jumps=2;
+	}
+
+	can_attack() {
+		return player_state_regular===this.state;
+	}
+
+	set_attacking(_cooloff) {
+		this.state=player_state_attack;
+		this.attack_cooloff=_cooloff;
+		if(!this.jumping) {
+			this.set_vector_x(0.0);
+		}
 	}
 }

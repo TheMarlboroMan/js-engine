@@ -9,7 +9,6 @@ export const facing_left=0;
 export const player_attacks_collect=0;
 export const enemies_collect=1;
 
-//TODO: Each room object should implement the collect_me thing.
 export class room_object {
 
 	constructor(_rect, _gc) {
@@ -53,6 +52,7 @@ export class room_object {
 	//I'd rather request some "collision_response" object to implement
 	//some sort of double dispatching.
 	get_type() {
+		console.error(this);
 		throw new Error("Called get_type on room_object base");
 	}
 };

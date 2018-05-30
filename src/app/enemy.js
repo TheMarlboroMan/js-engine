@@ -17,6 +17,7 @@ export class enemy extends moving_object {
 		super(new rect(_pt.clone(), 8, 16), _gc);
 
 		this.health=0;
+		this.remaining_invulnerability=0.0;
 	}
 
 	get_collection_id() {
@@ -39,19 +40,24 @@ export class enemy extends moving_object {
 				this.mark_for_deletion();
 			}
 			else {
-				//TODO: Enter invulnerability status.
+				//TODO: No magic.
+				this.remaining_invulnerability=0.5;
 			}
 		}
 	}
 
-	//TODO: I think everyone can implement this returning its
-	//inv counter.
 	can_take_damage() {
-		throw new Error("Called can_take_damage on base enemy class");
+		return 0.0==this.remaining_invulnerability;
 	}
 
 	loop(_delta, _rect) {
-		throw new Error("Called loop on base enemy class");
+
+		if(this.remaining_invulnerability) {
+			this.remaining_invulnerability-=_delta;
+			if(this.remaining_invulnerability <= 0.0) {
+				this.remaining_invulnerability=0.0;
+			}
+		}
 	}
 
 	move(_delta) {
@@ -74,7 +80,7 @@ export class enemy extends moving_object {
 		super.callback_collision(_rect, _pos);
 	}
 
-	//TODO: bah.
+	//TODO: To this properly: return some collision data object.
 	get_type() {
 		return "enemy";
 	}
@@ -85,24 +91,27 @@ export class enemy extends moving_object {
 //TODO: The logic for this patrolling is not in this class, which is actually
 //off-putting. One would have to go into the room.loop method to see what
 //makes these things turn... I must fix that.
+
+const patrolling_enemy_health=20;
+const patrolling_enemy_speed=30.0;
+
 export class patrolling_enemy extends enemy {
 
 	constructor(_x, _y, _gc) {
 		super(new point_2d(_x, _y), _gc);
-		//TODO: No magic numbers.
-		this.set_vector_x(30.0);
-		this.set_health(10);
+		this.set_vector_x(patrolling_enemy_speed);
+		this.set_health(patrolling_enemy_health);
 	}
 
 	loop(_delta, _rect) {
 
-		super.move(_delta);
+		super.loop(_delta);
+
+		if(this.can_take_damage()) {
+			super.move(_delta);
+		}
 
 		//TODO: The real logic should go here.
-	}
-
-	can_take_damage() {
-		return true; //TODO: Enter some invulnerability status..
 	}
 
 	callback_collision(_rect, _pos) {
@@ -110,7 +119,7 @@ export class patrolling_enemy extends enemy {
 		super.callback_collision(_rect, _pos);
 		switch(_pos) {
 			case pos_left:
-			case pos_right:
+			case pos_right: //Invert movement vector.
 				this.set_vector_x(this.get_vector_x()*-1);
 			break;
 		}

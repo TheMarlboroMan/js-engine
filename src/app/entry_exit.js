@@ -12,6 +12,11 @@ export class room_entry extends room_object {
 		this.id=_id;
 		this.facing=_f;
 	}
+
+	//TODO: Bah... Use a proper object for this.
+	get_type() {
+		return "entry";
+	}
 }
 
 export class room_exit extends room_object {
