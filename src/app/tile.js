@@ -12,9 +12,10 @@ const type_platform=2;
 const type_block_enemy=3;
 const type_deadly=5;
 
+//TODO: Is a tile a room object???
 export class tile extends room_object {
-	constructor(_x, _y, _t) {
-		super(new rect(new point_2d(_x*tile_w, _y*tile_h), tile_w, tile_h));
+	constructor(_x, _y, _t, _gc) {
+		super(new rect(new point_2d(_x*tile_w, _y*tile_h), tile_w, tile_h), _gc);
 		this.type=_t;
 	}
 

@@ -1,13 +1,19 @@
 "use strict"
 
 import {rect} from '../core/rect.js';
+import {deleter} from './deleter.js';
 
 export const facing_right=1;
 export const facing_left=0;
 
+//TODO: Each room object should implement the collect_me thing.
 export class room_object {
 
-	constructor(_rect) {
+	constructor(_rect, _gc) {
+
+		if(!(_gc instanceof deleter)) {
+			throw new Error("room_object must be constructed with a deleter");
+		}
 
 		if(!(_rect instanceof rect)) {
 			throw new Error("room_object must be built from a rect");

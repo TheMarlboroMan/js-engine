@@ -16,7 +16,7 @@ export class deleter {
 
 	collect(_deletable) {
 
-		this.collected.push_back(_deletable);
+		this.collected.push(_deletable);
 	}
 
 	can_perform_deletion() {
@@ -28,12 +28,12 @@ export class deleter {
 
 		this.collected.forEach((_item) => {
 			//TODO: Must be able to collect EVERYTHING.
-			let index=_rdc.player_attacks.indexOf(_item);
+			let index=this.rdc.player_attacks.indexOf(_item);
 			if(-1===index) {
 				throw new Error("Could not find deletable in array");
 			}
 
-			_rdc.player_attacks.splice(index, 1);
+			this.rdc.player_attacks.splice(index, 1);
 		});
 
 		this.collected.length=0;

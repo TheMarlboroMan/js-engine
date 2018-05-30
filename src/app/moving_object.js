@@ -17,8 +17,8 @@ export class gravity_data {
 
 export class moving_object extends room_object {
 
-	constructor(_rect) {
-		super(_rect);
+	constructor(_rect, _gc) {
+		super(_rect, _gc);
 		this.last_position=this.position.clone();
 		this.vector=new vector_2d();
 	}

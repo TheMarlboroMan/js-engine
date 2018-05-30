@@ -1,23 +1,21 @@
 "use strict"
 
 import {rect, pos_right, pos_left} from '../core/rect.js';
+import {point_2d} from '../core/point_2d.js';
 import {room_object} from './room_object.js'; 
-import {deleter} from './deleter.js'; //TODO: Should be in room 
 
-
+const w=8;
+const h=3;
 
 //TODO: This should be attached to the room as some sort of 
 //player_attack array. 
 
 export class player_attack extends room_object {
 
-	constructor(_rect, _gc) {
+	//TODO: The _gc thing should go deeper, to the very depths of the room_obkect.
+	constructor(_gc) {
 
-		if(!(_gc instanceof deleter)) {
-			throw new Error("player_attack must be constructed with a deleter");
-		}
-
-		super(_rect);
+		super(new rect(new point_2d(0,0), w, h), _gc);
 		this.deleter=_gc;
 		this.remaining_time=0.5;
 	}
@@ -33,6 +31,7 @@ export class player_attack extends room_object {
 			case pos_right:
 			case pos_left:
 				this.adjust_to(_rect, _pos);
+				this.get_position().origin.y=_rect.origin.y+(_rect.h/2);
 			break;
 			default:
 				throw new Error("Invalid position for attach_to");
@@ -42,12 +41,8 @@ export class player_attack extends room_object {
 
 	loop(_delta) {
 
-		this.remaning_time-=_delta;
-
+		this.remaining_time-=_delta;
 		if(this.remaining_time <= 0.0) {
-
-console.log("player attack expired");
-
 			this.deleter.collect(this);
 		}
 	}

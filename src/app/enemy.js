@@ -7,13 +7,13 @@ import {moving_object, axis_x, axis_y} from './moving_object.js';
 //!All enemies are considered moving... Even if they behave like stationary things.
 export class enemy extends moving_object {
 
-	constructor(_pt) {
+	constructor(_pt, _gc) {
 
 		if(!(_pt instanceof point_2d)) {
 			throw new Error("enemy must be built from point_2d");
 		}
 
-		super(new rect(_pt.clone(), 8, 16));
+		super(new rect(_pt.clone(), 8, 16), _gc);
 
 		this.health=0;
 	}
@@ -71,8 +71,8 @@ export class enemy extends moving_object {
 //makes these things turn... I must fix that.
 export class patrolling_enemy extends enemy {
 
-	constructor(_x, _y) {
-		super(new point_2d(_x, _y));
+	constructor(_x, _y, _gc) {
+		super(new point_2d(_x, _y), _gc);
 		//TODO: No magic numbers.
 		this.set_vector_x(30.0);
 		this.set_health(10);

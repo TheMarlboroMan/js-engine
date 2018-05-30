@@ -5,14 +5,14 @@ import {controller} from '../core/controller.js';
 import {display_2d_manipulator, invert_none, invert_x} from '../core/display_2d_manipulator.js';
 import {rgb_color, rgba_color} from '../core/display_tools.js';
 import {point_2d} from '../core/point_2d.js';
-import {rect, pos_inner_bottom, pos_inner_left} from '../core/rect.js';
+import {rect, pos_inner_bottom, pos_inner_left, pos_left, pos_right} from '../core/rect.js';
 import {camera_2d} from '../core/camera_2d.js';
 
 import {spritesheets} from './spritesheets.js';
 import {room} from './room.js';
+import {room_object_factory} from './room_object_factory.js';
 import {deleter} from './deleter.js';
 import {player, player_input} from './player.js';
-import {player_attack} from './player_attack.js';
 import {axis_x, axis_y} from './moving_object.js';
 
 export class game_controller extends controller {
@@ -22,8 +22,12 @@ export class game_controller extends controller {
 		this.clear_color=new rgb_color(0, 0, 0);
 		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 208));
 		this.room=new room();
-		this.player=new player();
 		this.deleter=new deleter(this.room.rdc);
+
+		//TODO: Might as well use the factory...
+		//TODO: Maybe put it on the map too???
+		this.player=new player(this.deleter);
+
 		this.entry_id=1;
 	}
 
@@ -32,7 +36,7 @@ export class game_controller extends controller {
 		let pi=new player_input();
 
 		if(_input.is_keydown('space')) 		{pi.y=-1;}
-//		else if(_input.is_keypressed('down')) 	{}
+		else if(_input.is_keydown('down')) 	{this.try_player_attack();}
 
 		if(_input.is_keypressed('left'))	{pi.x=-1;}
 		else if(_input.is_keypressed('right'))	{pi.x=1;}
@@ -56,10 +60,6 @@ export class game_controller extends controller {
 		if(this.deleter.can_perform_deletion()) {
 			this.deleter.perform_deletion();
 		}
-
-		//TODO: What about the player attacking?
-		//I think we should implement it with some sort of
-		//sword object the enemies run into :D.
 	}
 
 	do_draw(_display_control, _rm) {
@@ -84,33 +84,32 @@ export class game_controller extends controller {
 		};
 
 		//Draw the place..
+		//TODO: Move to another class.
+		//TODO. No magic.
+		//TODO: Ask the thing to perform the manipulations and such.
+		//TODO: Real graphics.
 		this.room.get_background().forEach((_item) => {
-			//TODO: Move to another class.
-			//TODO. No magic.
-			//TODO: Ask the tile to perform the manipulations and such.
 			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(_item.type));
 		});
 
-		//TODO: Draw items and so on.
-
 		this.room.get_enemies().forEach((_item) => {
-			//TODO: Draw the enemy, not some block.
-			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.position, new rgba_color(128, 0, 0, 0.9));
+			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.get_position(), new rgba_color(128, 0, 0, 0.9));
 		});
 
-		//TODO: Ask the player for its own way of displaying.
-		//TODO: The player should actually prepare the necessary information to be drawn.
+		this.room.get_player_attacks().forEach((_item) => {
+			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.get_position(), new rgba_color(0, 0, 128, 0.9));
+		});
 
-		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.position, new rgba_color(0, 128, 0, 0.9));
-		//TODO: These are crude calculations...
-		//display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), hr(this.player.position.origin.x-10, this.player.position.origin.y-16), gh('stand', 0), this.player.is_facing_right() ? invert_none : invert_x);
+		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.get_position(), new rgba_color(0, 128, 0, 0.9));
+		//display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), hr(this.player.get_position().origin.x-10, this.player.get_position().origin.y-16), gh('stand', 0), this.player.is_facing_right() ? invert_none : invert_x);
 	}
 
 	do_receive_message(_message) {
 
 		switch(_message.type) {
 			case 'map_loaded':
-				this.room.from_map(_message.body);
+				let fact=new room_object_factory(this.deleter);
+				this.room.from_map(_message.body, fact);
 				this.camera.set_limits(this.room.get_world_size_rect());
 				this.place_player_at_entry(this.entry_id);
 			break;
@@ -146,13 +145,13 @@ export class game_controller extends controller {
 		//Some other filters may be necccesary, like platform tiles that are not solid when the
 		//player has -y vector...
 		//TODO: Refactor.
-		let tiles=this.room.get_tiles_in_rect(this.player.position)
+		let tiles=this.room.get_tiles_in_rect(this.player.get_position())
 			.filter((_item) => {
-				if(!(this.player.position.collides_with(_item.position))) {
+				if(!(this.player.get_position().collides_with(_item.get_position()))) {
 					return false;
 				}
 				if(_item.is_platform()) {
-					if(this.player.get_vector_y() >= 0.0 && this.player.last_position.is_over(_item.position)) {
+					if(this.player.get_vector_y() >= 0.0 && this.player.last_position.is_over(_item.get_position())) {
 						return true;
 					}
 					return false;
@@ -176,7 +175,8 @@ export class game_controller extends controller {
 		}
 
 		//Checking collisions with objects.
-		let objects=this.room.get_map_objects_in_rect(this.player.position);
+		//TODO: About time to solve this with a proper collision_data object.
+		let objects=this.room.get_map_objects_in_rect(this.player.get_position());
 		for(let i=0; i < objects.length; i++) {
 			//TODO: Absolutely terrible.
 			switch(objects[i].get_type()) {
@@ -202,6 +202,7 @@ export class game_controller extends controller {
 		//player_reset method.
 		this.place_player_at_entry(this.entry_id);
 		this.player.stop();
+		//TODO: Clear player attacks. Reset the room, maybe.
 	}
 
 	place_player_at_entry(_entry_id) {
@@ -209,5 +210,13 @@ export class game_controller extends controller {
 		let entry_box=this.room.get_entry_by_id(_entry_id).get_position();
 		this.player.adjust_to(entry_box, pos_inner_bottom);
 		this.player.adjust_to(entry_box, pos_inner_left);
+	}
+
+	try_player_attack() {
+
+		//TODO: If can attack... check player status.
+		let fact=new room_object_factory(this.deleter);
+		fact.make_and_store_player_attack(this.player.get_position(), this.player.is_facing_right(), this.room.rdc);
+		//TODO: Change player state: will not move until the attack is done, plus some.
 	}
 }

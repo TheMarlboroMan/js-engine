@@ -1,5 +1,8 @@
 "use strict"
 
+//!This class is just a list of all the different containers present in a map.
+//!It is designed so it is known to the deleter.
+
 export class room_data_container {
 	constructor() {
 		//Tiles is a hashed map, where the key is the index as returned

@@ -3,16 +3,12 @@
 import {rect} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {map} from './map_loader.js';
-import {patrolling_enemy} from './enemy.js';
 import {axis_x} from './moving_object.js';
-import {tile, tile_w, tile_h} from './tile.js';
 import {draw_tile} from './draw_tile.js';
-import {room_entry, room_exit} from './entry_exit.js';
 import {room_data_container} from './room_data_container.js';
+import {room_object_factory} from './room_object_factory.js';
+import {tile_w, tile_h} from './tile.js';
 
-const obj_type_entry=1;
-const obj_type_exit=2;
-const obj_type_enemy=4;
 
 export class room {
 
@@ -32,10 +28,18 @@ export class room {
 		return this.rdc.enemies;
 	}
 
-	from_map(_map) {
+	get_player_attacks() {
+		return this.rdc.player_attacks;
+	}
+
+	from_map(_map, _fac) {
 
 		if(!(_map instanceof map)) {
 			throw new Error("from_map must be called with a valid map");
+		}
+
+		if(!(_fac instanceof room_object_factory)) {
+			throw new Error("from_map must be called with a room_object_factory");
 		}
 
 		this.rdc.clear();
@@ -52,7 +56,7 @@ export class room {
 		};
 
 		let fn_tiles=(_item) => {
-			this.rdc.tiles[""+this.get_index(_item.x, _item.y)]=new tile(_item.x, _item.y, _item.t);
+			this.rdc.tiles[""+this.get_index(_item.x, _item.y)]=_fac.make_tile(_item);
 		};
 
 		let fn_back=(_item) => {
@@ -60,19 +64,7 @@ export class room {
 		};
 
 		let fn_obj=(_item) => {
-
-			//TODO: Create a factory, remove direct dependencies.
-			switch(_item.t) {
-				case obj_type_entry:
-					this.rdc.entries.push(new room_entry(_item.x, _item.y, parseInt(_item.a.id, 10), parseInt(_item.a.facing, 10)));
-				break;
-				case obj_type_exit: 
-					this.rdc.exits.push(new room_exit(_item.x, _item.y, _item.a.dest, parseInt(_item.a.entry_id, 10)));
-				break;
-				case obj_type_enemy: //By dumb luck we don't need to adjust positions... the enemy is as high as its tile, so there's no need to push it to the floor.
-					this.rdc.enemies.push(new patrolling_enemy(_item.x*tile_w, _item.y*tile_h));
-				break;
-			}
+			_fac.make_and_store_room_object(_item, this.rdc);
 		};
 
 		process(_map.logic, fn_tiles);
@@ -156,6 +148,10 @@ export class room {
 				_item.process_collision(axis_x, tiles.shift().position);
 			}
 
+		});
+
+		this.rdc.player_attacks.forEach((_item) => {
+			_item.loop(_delta);
 		});
 	}
 }

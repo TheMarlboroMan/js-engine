@@ -17,8 +17,8 @@ export class player_input {
 
 export class player extends moving_object {
 
-	constructor() {
-		super(new rect(new point_2d(0, 0), 8, 16));
+	constructor(_gc) {
+		super(new rect(new point_2d(0, 0), 8, 16), _gc);
 
 		this.remaining_jumps=2;
 		this.jumping=true;
