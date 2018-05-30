@@ -1,16 +1,12 @@
 "use strict"
 
 import {room_data_container} from './room_data_container.js';
+import {player_attacks} from './room_object.js';
 
 export class deleter {
 
-	constructor(_rdc) {
+	constructor() {
 
-		if(!(_rdc instanceof room_data_container)) {
-			throw new Error("deleter must be created with a room_data_container");
-		}
-
-		this.rdc=_rdc;
 		this.collected=[];
 	}
 
@@ -24,16 +20,29 @@ export class deleter {
 		return this.collected.length;
 	}
 
-	perform_deletion() {
+	perform_deletion(_rdc) {
+
+		if(!(_rdc instanceof room_data_container)) {
+			throw new Error("perform_deletion must be invoked with a room_data_container");
+		}
 
 		this.collected.forEach((_item) => {
-			//TODO: Must be able to collect EVERYTHING.
-			let index=this.rdc.player_attacks.indexOf(_item);
-			if(-1===index) {
-				throw new Error("Could not find deletable in array");
+
+			let collection=null;
+			switch(_item.get_collection_id()) {
+				case player_attacks:
+					collection=_rdc.player_attacks; 
+				break;
 			}
 
-			this.rdc.player_attacks.splice(index, 1);
+			if(null!==collection) {
+				let index=collection.indexOf(_item);
+				if(-1===index) {
+					throw new Error("Could not find deletable in array");
+				}
+
+				collection.splice(index, 1);
+			}
 		});
 
 		this.collected.length=0;

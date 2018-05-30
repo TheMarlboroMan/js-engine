@@ -6,6 +6,8 @@ import {deleter} from './deleter.js';
 export const facing_right=1;
 export const facing_left=0;
 
+export const player_attacks=0;
+
 //TODO: Each room object should implement the collect_me thing.
 export class room_object {
 
@@ -19,10 +21,15 @@ export class room_object {
 			throw new Error("room_object must be built from a rect");
 		}
 		this.position=_rect.clone();
+		this.deleter=_gc;
 	}
 
 	get_position() {
 		return this.position;
+	}
+
+	mark_for_deletion() {
+		this.deleter.collect(this);
 	}
 
 	move_to(_pt) {
@@ -37,6 +44,10 @@ export class room_object {
 		this.position.adjust_to(_rect, _type);
 	}
 
+	//!Must return the constant referring to the place where this object will live.
+	get_collection_id() {
+		throw new Error("Called get_collection_id on room_object base");
+	}
 	//TODO: Fuck this... 
 	//I'd rather request some "collision_response" object to implement
 	//some sort of double dispatching.

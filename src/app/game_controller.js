@@ -22,7 +22,7 @@ export class game_controller extends controller {
 		this.clear_color=new rgb_color(0, 0, 0);
 		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 208));
 		this.room=new room();
-		this.deleter=new deleter(this.room.rdc);
+		this.deleter=new deleter();
 
 		//TODO: Might as well use the factory...
 		//TODO: Maybe put it on the map too???
@@ -58,7 +58,7 @@ export class game_controller extends controller {
 		this.room.loop(_delta, this.player.position);
 
 		if(this.deleter.can_perform_deletion()) {
-			this.deleter.perform_deletion();
+			this.deleter.perform_deletion(this.room.rdc);
 		}
 	}
 

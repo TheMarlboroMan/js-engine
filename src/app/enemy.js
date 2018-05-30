@@ -27,12 +27,13 @@ export class enemy extends moving_object {
 	}
 
 	suffer_damage(_v) {
-		this.health-=-v;
+		this.health-=_v;
+
+		if(this.health <= 0) {
+			this.mark_for_deletion();
+		}
 	}
 
-	is_dead() {
-		return this.health <= 0;
-	}
 
 	loop(_delta, _rect) {
 		throw new Error("Called loop on base enemy class");

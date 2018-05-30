@@ -2,7 +2,7 @@
 
 import {rect, pos_right, pos_left} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
-import {room_object} from './room_object.js'; 
+import {player_attacks, room_object} from './room_object.js'; 
 
 const w=8;
 const h=3;
@@ -16,8 +16,11 @@ export class player_attack extends room_object {
 	constructor(_gc) {
 
 		super(new rect(new point_2d(0,0), w, h), _gc);
-		this.deleter=_gc;
 		this.remaining_time=0.5;
+	}
+
+	get_collection_id() {
+		return player_attacks;
 	}
 
 	attach_to(_rect, _pos) {
@@ -43,7 +46,7 @@ export class player_attack extends room_object {
 
 		this.remaining_time-=_delta;
 		if(this.remaining_time <= 0.0) {
-			this.deleter.collect(this);
+			this.mark_for_deletion();
 		}
 	}
 

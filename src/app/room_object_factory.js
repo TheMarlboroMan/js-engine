@@ -15,6 +15,7 @@ const obj_type_enemy=4;
 export class room_object_factory {
 
 	constructor(_gc) {
+
 		if(!(_gc instanceof deleter)) {
 			throw new Error("room_object_factory must be constructed with a deleter");
 		}
