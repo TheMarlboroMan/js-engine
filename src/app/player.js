@@ -4,9 +4,38 @@ import {rect, pos_top, pos_bottom, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {moving_object, gravity_data, axis_x, axis_y} from './moving_object.js';
 import {facing_left, facing_right} from './room_object.js';
+import {countdown_to_zero_delta} from './tools.js';
 
-const player_walking_speed=80.0;
-const player_jump_factor=-100.0;
+class attack_melee_data {
+
+	constructor(_co) {
+		//TODO: Is this magic???
+		this.pre_attack_count=0.1;
+		this.max_cooloff=_co;
+		this.cooloff_count=this.max_cooloff;
+	}
+
+	loop(_delta) {
+		if(this.pre_attack_count) {
+			this.pre_attack_count=countdown_to_zero_delta(this.pre_attack_count, _delta);
+		}
+		else if(this.cooloff_count) {
+			this.cooloff_count=countdown_to_zero_delta(this.cooloff_count, _delta);
+		}
+	}
+
+	is_precounting() {
+		return this.pre_attack_count;
+	}
+
+	has_started_cooloff() {
+		return this.cooloff_count!=this.max_cooloff;
+	}
+
+	is_done() {
+		return 0.0==this.pre_attack_count && 0.0==this.cooloff_count;
+	}
+};
 
 export class player_input {
 	constructor() {
@@ -15,23 +44,28 @@ export class player_input {
 	}
 }
 
-//TODO: Not liking this Movement and combat states should be separate.
-const player_state_regular=0;
-const player_state_attack=1;
+const player_walking_speed=80.0;
+const player_jump_factor=-100.0;
+
+const gravity_const=3.0;
+const weight=80.0;
+const max_fall_speed=200.0;
+
+const jump_count=2;
+const w=8;
+const h=16;
 
 export class player extends moving_object {
 
 	constructor(_gc) {
-		super(new rect(new point_2d(0, 0), 8, 16), _gc);
+		super(new rect(new point_2d(0, 0), w, h), _gc);
 
-		this.state=player_state_regular;
-		//TODO: No magic...
-		this.remaining_jumps=2;
+		this.remaining_jumps=jump_count;
 		this.jumping=true;
 		this.facing=facing_right;
-		//TODO: No magic.
-		this.gravity_data=new gravity_data(3.0, 80.0, 200.0);
-		this.attack_cooloff=0.0;
+		this.gravity_data=new gravity_data(gravity_const, weight, max_fall_speed);
+
+		this.attack_data=null;
 	}
 
 	is_facing_right() {
@@ -77,14 +111,14 @@ export class player extends moving_object {
 		}
 	}
 
-	//TODO: What a lie... loop should be called only once!.
 	loop(_delta) {
-		if(this.attack_cooloff) {
-			this.attack_cooloff-=_delta;
-			if(this.attack_cooloff<=0.0) {
-				this.attack_cooloff=0.0;
-				//TODO: Not so sure about that... perhaps attacking=false?
-				this.state=player_state_regular;
+
+		if(this.attack_data) {
+
+			this.attack_data.loop(_delta);
+			if(this.attack_data.is_done()) {
+				delete this.attack_data;
+				this.attack_data=null;
 			}
 		}
 	}
@@ -96,9 +130,10 @@ export class player extends moving_object {
 			if(this.get_vector_x() && !this.jumping && this.get_vector_y() > 0.0) {
 				this.set_vector_x(this.get_vector_x()*0.9);
 			}
-			//TODO: I don't like the state thing.
-			else if(this.state==player_state_attack && 0.0==this.get_vector_y()) {
-				return; //No movement on the X axis when attacking on the floor.
+			//TODO: Can be better... Ask the attack data if the player can move??
+			//No movement on the X axis when attacking on the floor.
+			else if(null!==this.attack_data && 0.0==this.get_vector_y()) {
+				return; 
 			}
 		}
 		else if(axis_y===_axis) {
@@ -135,18 +170,26 @@ export class player extends moving_object {
 	}
 
 	touch_ground() {
-		//TODO: Perhaps... on_ground=true?.
+		//TODO: Perhaps... on_ground=true?...
 		this.jumping=false;
-		this.remaining_jumps=2;
+		this.remaining_jumps=jump_count;
 	}
 
 	can_attack() {
-		return player_state_regular===this.state;
+		return null===this.attack_data;
 	}
 
-	set_attacking(_cooloff) {
-		this.state=player_state_attack;
-		this.attack_cooloff=_cooloff;
+	must_create_attack() {
+		return	null!==this.attack_data 
+			&& !this.attack_data.is_precounting()
+			&& !this.attack_data.has_started_cooloff();
+	}
+
+	start_attacking(_cooloff) {
+
+		this.attack_data=new attack_melee_data(_cooloff);
+
+		//TODO: Maybe ask the attack itself...
 		if(!this.jumping) {
 			this.set_vector_x(0.0);
 		}

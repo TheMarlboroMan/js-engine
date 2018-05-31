@@ -153,11 +153,10 @@ export class room {
 					_item.suffer_damage(_attack.get_damage());
 				}
 			});
-
 		});
 
 		this.rdc.player_attacks.forEach((_item) => {
-			_item.loop(_delta);
+			_item.loop(_delta, _player_pos);
 		});
 	}
 }

@@ -45,8 +45,8 @@ export class room_object_factory {
 	}
 
 	make_player_attack(_rect, _face_right) {
-		let pa=new player_attack(this.gc);
-		pa.attach_to(_rect, _face_right ? pos_right : pos_left);
+		let pa=new player_attack(this.gc, _face_right ? pos_right : pos_left);
+		pa.attach_to(_rect);
 		return pa;
 	}
 

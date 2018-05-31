@@ -23,7 +23,7 @@ export class game_controller extends controller {
 		this.camera=new camera_2d(new rect(new point_2d(0,0), 320, 208));
 		this.room=new room();
 		this.deleter=new deleter();
-
+		this.ro_factory=new room_object_factory(this.deleter);
 		//TODO: Might as well use the factory...
 		//TODO: Maybe put it on the map too???
 		this.player=new player(this.deleter);
@@ -53,6 +53,12 @@ export class game_controller extends controller {
 		//way each entity knows what to do.
 
 		this.player.loop(_delta);
+		if(this.player.must_create_attack()) {
+			//TODO: Interesting thing... could the player have changed facing???
+			this.ro_factory.make_and_store_player_attack(this.player.get_position(), this.player.is_facing_right(), this.room.rdc);
+		}
+
+
 		this.do_player_movement(_delta, axis_x);
 		this.do_player_movement(_delta, axis_y);
 
@@ -109,8 +115,7 @@ export class game_controller extends controller {
 
 		switch(_message.type) {
 			case 'map_loaded':
-				let fact=new room_object_factory(this.deleter);
-				this.room.from_map(_message.body, fact);
+				this.room.from_map(_message.body, this.ro_factory);
 				this.camera.set_limits(this.room.get_world_size_rect());
 				this.place_player_at_entry(this.entry_id);
 			break;
@@ -216,15 +221,12 @@ export class game_controller extends controller {
 		this.player.adjust_to(entry_box, pos_inner_left);
 	}
 
+	//!If the player can attack, will set it in a pre-attack state.
 	try_player_attack() {
 
 		if(this.player.can_attack()) {
-			let fact=new room_object_factory(this.deleter);
-			//TODO: We should somehow link the attack to the player, so it moves in flight... Maybe we can reference the rect...
-			let attack=fact.make_and_store_player_attack(this.player.get_position(), this.player.is_facing_right(), this.room.rdc);
-			//TODO: No magic!
-			this.player.set_attacking(attack.remaining_time+0.1);
-
+			//TODO: SORCERY!.
+			this.player.start_attacking(0.5);
 		}
 	}
 }

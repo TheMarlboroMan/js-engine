@@ -4,6 +4,7 @@ import {rect, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
 import {moving_object, axis_x, axis_y} from './moving_object.js';
 import {enemies_collect} from './room_object.js';
+import {countdown_to_zero_delta} from './tools.js';
 
 //!All enemies are considered moving... Even if they behave like stationary things.
 export class enemy extends moving_object {
@@ -53,10 +54,7 @@ export class enemy extends moving_object {
 	loop(_delta, _rect) {
 
 		if(this.remaining_invulnerability) {
-			this.remaining_invulnerability-=_delta;
-			if(this.remaining_invulnerability <= 0.0) {
-				this.remaining_invulnerability=0.0;
-			}
+			this.remaining_invulnerability=countdown_to_zero_delta(this.remaining_invulnerability, _delta);
 		}
 	}
 
