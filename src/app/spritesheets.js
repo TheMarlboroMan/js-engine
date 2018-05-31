@@ -15,9 +15,12 @@ let hero={
 	'guard' : [pt(0, 3)]
 };
 
-//TODO
-let monster={
-
+let enemy={
+	'stand' : [pt(0, 4)],
+	'hurt' : [pt(2, 4), pt(3, 4)],
+	'walk' : [pt(0, 5), pt(1, 5), pt(2, 5), pt(3, 5)],
+	'attack' : [pt(0, 6)],
+	'guard' : [pt(0, 7)]
 };
 
 export class spritesheets {
@@ -25,5 +28,9 @@ export class spritesheets {
 	//TODO: Check data.
 	static get_hero_rect(_key, _frame) {
 		return new rect(hero[_key][_frame], 32, 32);
+	}
+
+	static get_enemy_rect(_key, _frame) {
+		return new rect(enemy[_key][_frame], 32, 32);
 	}
 };

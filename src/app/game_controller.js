@@ -92,6 +92,8 @@ export class game_controller extends controller {
 
 
 		//TODO: The path is clear for this!!.
+		//TODO: We have the sheet.
+		//TODO: We just have to implement get_draw_info.
 		this.room.get_enemies().forEach((_item) => {
 			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.get_position(), new rgba_color(128, 0, 0, 0.9));
 		});
