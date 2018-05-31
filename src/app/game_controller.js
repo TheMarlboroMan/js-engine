@@ -2,12 +2,13 @@
 
 import {message} from '../core/messages.js';
 import {controller} from '../core/controller.js';
-import {display_2d_manipulator, invert_none, invert_x} from '../core/display_2d_manipulator.js';
+import {display_2d_manipulator} from '../core/display_2d_manipulator.js';
 import {rgb_color, rgba_color} from '../core/display_tools.js';
 import {point_2d} from '../core/point_2d.js';
 import {rect, pos_inner_bottom, pos_inner_left, pos_left, pos_right} from '../core/rect.js';
 import {camera_2d} from '../core/camera_2d.js';
 
+import {draw_module} from './draw_module.js';
 import {spritesheets} from './spritesheets.js';
 import {room} from './room.js';
 import {room_object_factory} from './room_object_factory.js';
@@ -75,14 +76,7 @@ export class game_controller extends controller {
 		this.camera.center_on(this.player.position.origin);
 
 		//TODO: This is awful.. Like REALLY AWFUL.
-		//TODO: Let us not repeat ourselves.
-		//TODO. No magic numbers...
 		let r=function(_x, _y) {return new rect(new point_2d(_x, _y), 16, 16);};
-		let hr=function(_x, _y) {return new rect(new point_2d(_x, _y), 32, 32);};
-		let gh=function(_k, _f) {
-			let t=spritesheets.get_hero(_k, _f);
-			return hr(t.x, t.y);
-		};
 		let gs=function(_k) {
 			let y=Math.floor(_k / 7);
 			let x=_k % 7;
@@ -91,24 +85,22 @@ export class game_controller extends controller {
 		};
 
 		//Draw the place..
-		//TODO: Move to another class.
-		//TODO. No magic.
-		//TODO: Ask the thing to perform the manipulations and such.
-		//TODO: Real graphics.
+		//TODO: We can do this now.
 		this.room.get_background().forEach((_item) => {
 			display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('tiles'), r(_item.x*16, _item.y*16), gs(_item.type));
 		});
 
+
+		//TODO: The path is clear for this!!.
 		this.room.get_enemies().forEach((_item) => {
 			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.get_position(), new rgba_color(128, 0, 0, 0.9));
 		});
 
+		draw_module.draw(this.player.get_draw_info(), _display_control, _rm, this.camera);
+
 		this.room.get_player_attacks().forEach((_item) => {
 			display_2d_manipulator.draw_rect(_display_control.display, this.camera, _item.get_position(), new rgba_color(0, 0, 128, 0.9));
 		});
-
-		display_2d_manipulator.draw_rect(_display_control.display, this.camera, this.player.get_position(), new rgba_color(0, 128, 0, 0.9));
-		//display_2d_manipulator.draw_sprite(_display_control.display, this.camera, _rm.get_image('sprites'), hr(this.player.get_position().origin.x-10, this.player.get_position().origin.y-16), gh('stand', 0), this.player.is_facing_right() ? invert_none : invert_x);
 	}
 
 	do_receive_message(_message) {

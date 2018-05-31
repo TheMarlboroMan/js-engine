@@ -5,7 +5,7 @@ import {point_2d} from '../core/point_2d.js';
 import {player_attacks_collect, room_object} from './room_object.js'; 
 import {countdown_to_zero_delta} from './tools.js';
 
-const w=8;
+const w=12;
 const h=3;
 
 const default_damage=10;

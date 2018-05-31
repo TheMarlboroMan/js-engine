@@ -2,9 +2,15 @@
 
 import {rect, pos_top, pos_bottom, pos_left, pos_right} from '../core/rect.js';
 import {point_2d} from '../core/point_2d.js';
+import {rgba_color} from '../core/display_tools.js';
+import {invert_none, invert_x} from '../core/display_2d_manipulator.js';
+
 import {moving_object, gravity_data, axis_x, axis_y} from './moving_object.js';
 import {facing_left, facing_right} from './room_object.js';
 import {countdown_to_zero_delta} from './tools.js';
+//TODO... Do not import all.
+import {draw_info_rect, draw_info_sprite, draw_info_composite} from './draw_info.js';
+import {spritesheets} from './spritesheets.js';
 
 class attack_melee_data {
 
@@ -54,6 +60,8 @@ const max_fall_speed=200.0;
 const jump_count=2;
 const w=8;
 const h=16;
+
+const resource_name='sprites';
 
 export class player extends moving_object {
 
@@ -106,7 +114,8 @@ export class player extends moving_object {
 
 		super.set_vector_x(_val);
 
-		if(_val) {
+		if(_val && null===this.attack_data) {
+
 			this.facing = this.get_vector_x() > 0 ? facing_right : facing_left;
 		}
 	}
@@ -193,5 +202,33 @@ export class player extends moving_object {
 		if(!this.jumping) {
 			this.set_vector_x(0.0);
 		}
+	}
+
+	//TODO: Choud go deeper into the hierarchy...
+	get_draw_info() {
+
+		//TODO: Check type...
+		//TODO: If debug... else just do the sprite!.
+
+		let res=new draw_info_composite();
+
+		let pos=this.get_position();
+		let facing_right=this.is_facing_right();
+
+		let x=facing_right ? pos.origin.x-10 : pos.origin.x-13;
+		let y=pos.origin.y-16;
+
+		let stance=this.attack_data ? 'attack' : 'stand';
+
+		res.add(new draw_info_sprite(
+			//TODO: Is this magic?
+			new rect(new point_2d(x, y), 32, 32), 
+			resource_name,
+			spritesheets.get_hero_rect(stance, 0),
+			facing_right ? invert_none : invert_x));
+
+		res.add(new draw_info_rect(this.get_position(), new rgba_color(0, 128, 0, 0.9)));
+
+		return res;
 	}
 }

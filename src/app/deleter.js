@@ -1,6 +1,7 @@
 "use strict"
 
 import {room_data_container} from './room_data_container.js';
+//No really a circular dependency.
 import {player_attacks_collect, enemies_collect} from './room_object.js';
 
 export class deleter {
