@@ -8,7 +8,7 @@ import {draw_tile} from './draw_tile.js';
 import {room_data_container} from './room_data_container.js';
 import {room_object_factory} from './room_object_factory.js';
 import {tile_w, tile_h} from './tile.js';
-
+import {collision_checker} from './collision_checker.js';
 
 export class room {
 
@@ -73,6 +73,7 @@ export class room {
 	}
 
 	//Returns the index of a tile in the hashed map.
+	//TODO: Where should this go???... The collision_checker needs it too.
 	get_index(_x, _y) {
 		//TODO: Check boundaries.
 		return _x + (_y * this.w);
@@ -104,6 +105,7 @@ export class room {
 		return result;
 	}
 
+	//TODO: Extinguish this...
 	//!Returns all tiles bounded to the rectangle.
 	get_tiles_in_rect(_rect) {
 
@@ -135,19 +137,12 @@ export class room {
 	loop(_delta, _player_pos) {
 
 		this.rdc.enemies.forEach((_item) => {
-			_item.loop(_delta, _player_pos);
 
-			let tiles=this.get_tiles_in_rect(_item.position)
-				.filter((_tile) => {
-					return (_tile.is_solid() || _tile.blocks_enemies())
-					&& _item.position.collides_with(_tile.position);
-				});
+			//Check for collisions.
+			let cc=new collision_checker(this.rdc, this.w);
+			_item.loop(_delta, cc, _player_pos);
 
-			//TODO: The axis thing reeks. What if we need something that bounces up and down?
-			if(tiles.length) {
-				_item.process_collision(axis_x, tiles.shift().position);
-			}
-
+			//Check for damage due to player attacks.
 			this.rdc.player_attacks.forEach((_attack) => {
 				if(_attack.get_position().collides_with(_item.get_position())) {
 					_item.suffer_damage(_attack.get_damage());

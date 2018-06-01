@@ -48,6 +48,13 @@ export class room_object {
 	get_collection_id() {
 		throw new Error("Called get_collection_id on room_object base");
 	}
+
+	//!Must return the constant referring to the type of collision checking
+	//!this class requests... Constants are defined in collision_checker_type.
+	get_collision_checker_type() {
+		throw new Error("Called get_collision_checker_type on room_object base");
+	}
+
 	//TODO: Fuck this... 
 	//I'd rather request some "collision_response" object to implement
 	//some sort of double dispatching.

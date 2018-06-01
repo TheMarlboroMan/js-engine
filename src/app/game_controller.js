@@ -137,9 +137,8 @@ export class game_controller extends controller {
 		this.player.save_last_known_position();
 		this.player.do_movement(_axis, _delta);
 
-	//TODO: Could never decide who's really responsible for this... Does the
-	//player need to know anything about the world?. Do we need a separate
-	//class for this or can it live in the controller?
+		//TODO: We can add this shit in the collision_checker 
+		//However, who decides what happens with the collisions???...
 
 		//We get the tiles and filter the real collisions, in case we have irregular-shaped tiles.
 		//Some other filters may be necccesary, like platform tiles that are not solid when the
@@ -189,6 +188,8 @@ export class game_controller extends controller {
 					break;
 				return;
 				case 'enemy':
+					//TODO: if this ends up in the player we'll
+					//need signals...
 					this.kill_player();
 				break;
 				case 'entry': //TODO: Why?

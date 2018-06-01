@@ -8,88 +8,15 @@
 <title>JS-Engine test</title>
 </head>
 <body style="overflow: hidden; font-size: 10px;">
-	<p>Enable dom.moduleScripts.enabled in about:config for ECMA6 stuff</p>
+	<!--<p>Enable dom.moduleScripts.enabled in about:config for ECMA6 stuff</p>-->
 	<input type="button" id="btn_stop" value="stop" />
 	<input type="button" id="btn_start" value="start" />
 	<div id="container"></div>
 	<div id="debug"></div>
+<pre>
+	<script type="module" type="text/javascript" src="src/main.js"></script> 
+	<script nomodule src="build/main.js"></script>
+</pre>
 </body>
-<script type="text/javascript">
-/*
-let sources=['assets/audio/journey_to_the_east_rocks.ogg',
-	'assets/audio/snowfall.ogg',
-	'assets/audio/1.wav',
-	'assets/audio/2.wav',
-	'assets/audio/3.wav',
-	'assets/audio/4.wav',
-	'assets/audio/5.wav'];
-
-
-let promises=[];
-
-for(let i in sources) {
-	let filename=sources[i];
-
-	let p=new Promise((_ok, _err) => {
-
-		let a=new Audio();
-		a.preload='auto'; //This makes magic.
-		let fn=(_res) => {
-			a.removeEventListener('canplaythrough', ev, true);
-			a.removeEventListener('error', everr, true);
-			_ok(_res);
-		};
-		let fn_err=(_res) => {
-			a.removeEventListener('canplaythrough', ev, true);
-			a.removeEventListener('error', everr, true);
-			_err(_res);
-		}
-		//TODO: Should add error to all resources!!.
-		let ev=a.addEventListener('canplaythrough', fn, true);
-		let everr=a.addEventListener('error', fn_err, true);
-		a.src=filename;
-	});
-
-	promises.push(p);
-}
-
-
-Promise.all(promises)
-.then((_res) => {
-
-	console.log("All audio loaded");
-
-	let am=new audio_manager(8);
-
-	sources.forEach((_item) => {
-		let div=document.createElement('div');
-		let span=document.createElement('span');
-		let button=document.createElement('button');
-
-		span.innerHTML=_item;
-		button.value="Play";
-		button.innerHTML='Play';
-		button.onclick=() => {
-			am.play(_item);
-			let ic=am.get_idle_channel();
-			if(null!==ic) console.log(ic.index);
-			else console.log("all full!");
-		};
-
-		div.appendChild(button);
-		div.appendChild(span);
-		document.getElementById('container').appendChild(div);
-	});
-
-	//TODO: Push the button to locate an empty audio and start playing it!.
-	
-
-})
-.catch((_err) => {
-	console.error('tough luck ', _err);
-});
-*/
-</script>
-<script type="module" type="text/javascript" src="src/main.js"></script>
-<script nomodule src="build/main.js"></script>
+	<script nomodule src="build/main.js"></script>
 </html>

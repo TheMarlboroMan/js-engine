@@ -5,6 +5,7 @@ import {point_2d} from '../core/point_2d.js';
 import {moving_object, axis_x, axis_y} from './moving_object.js';
 import {enemies_collect} from './room_object.js';
 import {countdown_to_zero_delta} from './tools.js';
+import {collision_checker_type_enemy} from './collision_checker_types';
 
 //!All enemies are considered moving... Even if they behave like stationary things.
 export class enemy extends moving_object {
@@ -51,7 +52,7 @@ export class enemy extends moving_object {
 		return 0.0==this.remaining_invulnerability;
 	}
 
-	loop(_delta, _rect) {
+	loop(_delta, _cc, _rect) {
 
 		if(this.remaining_invulnerability) {
 			this.remaining_invulnerability=countdown_to_zero_delta(this.remaining_invulnerability, _delta);
@@ -72,6 +73,9 @@ export class enemy extends moving_object {
 		}
 	}
 
+	get_collision_checker_type() {
+		return collision_checker_type_enemy;
+	}
 
 	callback_collision(_rect, _pos) {
 
@@ -86,9 +90,6 @@ export class enemy extends moving_object {
 
 //!An enemy that patrols left and right, until it finds some obstacle and turns
 //!back.
-//TODO: The logic for this patrolling is not in this class, which is actually
-//off-putting. One would have to go into the room.loop method to see what
-//makes these things turn... I must fix that.
 
 const patrolling_enemy_health=20;
 const patrolling_enemy_speed=30.0;
@@ -101,15 +102,23 @@ export class patrolling_enemy extends enemy {
 		this.set_health(patrolling_enemy_health);
 	}
 
-	loop(_delta, _rect) {
+	loop(_delta, _cc, _rect) {
 
-		super.loop(_delta);
+		super.loop(_delta, _cc, _rect);
 
+		//While invulnerable these are also motionless...
 		if(this.can_take_damage()) {
 			super.move(_delta);
-		}
 
-		//TODO: The real logic should go here.
+			//Turn around if a collision is found.
+			let collisions=_cc.get_collisions_for(this);
+			if(collisions.length) {
+				//TODO: Another possible solution: store both sides of the collisions, solve them all later!.
+
+				//TODO: The axis thing reeks. What if we need something that bounces up and down?
+				this.process_collision(axis_x, collisions.shift().get_position());
+			}
+		}
 	}
 
 	callback_collision(_rect, _pos) {
