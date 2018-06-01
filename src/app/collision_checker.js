@@ -64,4 +64,24 @@ export class collision_checker {
 				&& _rect.collides_with(_tile.position);
 		});
 	}
+
+	//TODO: Oh shit, knowledge of the player if needed, like his vector and shit.
+	get_collisions_for_player(_rect) {
+		let tiles=this.room.get_tiles_in_rect(this.player.get_position())
+			.filter((_item) => {
+				if(!(this.player.get_position().collides_with(_item.get_position()))) {
+					return false;
+				}
+				if(_item.is_platform()) {
+					if(this.player.get_vector_y() >= 0.0 && this.player.last_position.is_over(_item.get_position())) {
+						return true;
+					}
+					return false;
+				}
+				if(_item.blocks_enemies()) {
+					return false;
+				}
+				return true;
+			});
+	}
 }
