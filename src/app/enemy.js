@@ -5,7 +5,7 @@ import {point_2d} from '../core/point_2d.js';
 import {moving_object, axis_x, axis_y} from './moving_object.js';
 import {enemies_collect} from './room_object.js';
 import {countdown_to_zero_delta} from './tools.js';
-import {collision_checker_type_enemy} from './collision_checker_types';
+import {collision_checker_type_enemy} from './collision_checker_types.js';
 
 //!All enemies are considered moving... Even if they behave like stationary things.
 export class enemy extends moving_object {

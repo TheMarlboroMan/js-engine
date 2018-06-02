@@ -27,7 +27,7 @@ Start by src/main.js. Move then to src/app directory for a few examples.
 
 - If your browser support ES6 style imports and exports:
 	- Do nothing. Use index.html and be happy.
-	- Warning, firefox 60 is not working anymore... Do the "else" below.
+	- Warning, firefox 60 won't load if there are any errors locating the modules (such as invalid path to a .js file)
 - Else:
 	- Solve the package.json dependencies with npm. (npm install).
 	- Do "npm run build".

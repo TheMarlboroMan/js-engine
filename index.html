@@ -2,21 +2,22 @@
 <html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<style type="text/css">
+	<style type="text/css">
+body {overflow: hidden; font-size: 10px;}
 /*canvas {width: 640px; height: 400px;}*/
-</style>
-<title>JS-Engine test</title>
+	</style>
+	<script type="module" src="src/main.js"></script> 
+<!--
+	<script nomodule src="build/main.js"></script>
+-->
+	<title>JS-Engine test</title>
 </head>
-<body style="overflow: hidden; font-size: 10px;">
+<body>
 	<!--<p>Enable dom.moduleScripts.enabled in about:config for ECMA6 stuff</p>-->
 	<input type="button" id="btn_stop" value="stop" />
 	<input type="button" id="btn_start" value="start" />
 	<div id="container"></div>
 	<div id="debug"></div>
-<pre>
-	<script type="module" type="text/javascript" src="src/main.js"></script> 
-	<script nomodule src="build/main.js"></script>
-</pre>
+
 </body>
-	<script nomodule src="build/main.js"></script>
 </html>
