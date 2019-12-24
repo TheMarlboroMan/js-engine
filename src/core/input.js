@@ -38,7 +38,8 @@ export class input {
 
 		this.keydown_listener=(_event) => {this.handle_event(_event, this.keydowns, 'down');};
 		this.keyup_listener=(_event) => {this.handle_event(_event, this.keyups, 'up');};
-		this.keypress_listener=(_event) => {this.handle_event(_event, this.keypresses, 'press');};
+//TODO: Can do better. Keypresses cannot detect arrow keys.
+//		this.keypress_listener=(_event) => {this.handle_event(_event, this.keypresses, 'press');};
 
 		//This looks like keycode : 'keyname';
 		this.reverse_map=create_reverse_lookup(_filter_map);
@@ -49,13 +50,13 @@ export class input {
 	activate() {
 		document.addEventListener('keydown', this.keydown_listener, false);
 		document.addEventListener('keyup', this.keyup_listener, false);
-		document.addEventListener('keypress', this.keypress_listener, false);
+//		document.addEventListener('keypress', this.keypress_listener, false);
 	}
 
 	deactivate() {
 		document.removeEventListener('keydown', this.keydown_listener, false);
 		document.removeEventListener('keyup', this.keyup_listener, false);
-		document.removeEventListener('keypress', this.keypress_listener, false);
+//		document.removeEventListener('keypress', this.keypress_listener, false);
 	}
 
 	handle_event(_event, _map, _quick) {
@@ -64,23 +65,26 @@ export class input {
 
 			let key=this.reverse_map[_event.keyCode];
 
-			//TODO: Can do better.
+			//TODO: Can do better. Keypresses cannot detect arrow keys.
 			switch(_quick) {//Equivalent to switch event.type
-				default:
-					_map[key]=true;
-					this.quick_access[_quick]=true;
-				break;
+				//This seems to be... "press".
+//				default: 
+//					_map[key]=true;
+//					this.quick_access[_quick]=true;
+//				break;
 				case 'up':
 					_map[key]=true;
 					this.quick_access[_quick]=true;
 
 					this.keydowns[key]=false;
 					this.keypresses[key]=false;
-					this.keydownsguard[key]=false;
+					this.keydownsguard[key]=false;					
 					this.quick_access['down']=false;
 				break;
 				case 'down':
 					_map[key]=!this.keydownsguard[key];
+					this.keydowns[key]=true;
+					this.keypresses[key]=true;
 					this.keydownsguard[key]=true;
 				break;
 			}
