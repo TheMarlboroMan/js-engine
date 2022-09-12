@@ -8,6 +8,12 @@ Attempt to make something similar to dfw, but with JS.
 /src/app contains the application files.
 /src/main.js contains the bootstrapping logic.
 
+# Example:
+
+If you host the project somewhere and navigate to the index there should be a "start" button. Click it and a knight will appear for your amusement.
+
+Using the file:// protocol is sure to make you run into problems.
+
 # TODO:
 
 - Reorganize files: have assets and src/app under "example". Build command will have to be modified, probably.
