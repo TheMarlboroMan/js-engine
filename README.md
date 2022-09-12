@@ -14,6 +14,10 @@ If you host the project somewhere and navigate to the index there should be a "s
 
 Using the file:// protocol is sure to make you run into problems.
 
+# Completeness:
+
+The project is roughly organized and there are missing features, but it can be used to run a nice, simple game.
+
 # TODO:
 
 - Reorganize files: have assets and src/app under "example". Build command will have to be modified, probably.
